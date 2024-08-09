@@ -42,6 +42,7 @@ import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
 // Soft UI Dashboard React context
 import { useSoftUIController, setMiniSidenav } from "context";
+import { signOutUser } from "../../firebase";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useSoftUIController();
@@ -71,61 +72,66 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }, [dispatch, location]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, route, href }) => {
-    let returnValue;
+  const renderRoutes = routes.map(
+    ({ type, name, icon, title, noCollapse, key, route, href, isProtected }) => {
+      let returnValue;
+      if (!isProtected) {
+        return;
+      }
 
-    if (type === "collapse") {
-      returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            color={color}
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </Link>
-      ) : (
-        <NavLink to={route} key={key}>
-          <SidenavCollapse
-            color={color}
+      if (type === "collapse") {
+        returnValue = href ? (
+          <Link
+            href={href}
             key={key}
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </NavLink>
-      );
-    } else if (type === "title") {
-      returnValue = (
-        <SoftTypography
-          key={key}
-          display="block"
-          variant="caption"
-          fontWeight="bold"
-          textTransform="uppercase"
-          opacity={0.6}
-          pl={3}
-          mt={2}
-          mb={1}
-          ml={1}
-        >
-          {title}
-        </SoftTypography>
-      );
-    } else if (type === "divider") {
-      returnValue = <Divider key={key} />;
-    }
+            target="_blank"
+            rel="noreferrer"
+            sx={{ textDecoration: "none" }}
+          >
+            <SidenavCollapse
+              color={color}
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+              noCollapse={noCollapse}
+            />
+          </Link>
+        ) : (
+          <NavLink to={route} key={key}>
+            <SidenavCollapse
+              color={color}
+              key={key}
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+              noCollapse={noCollapse}
+            />
+          </NavLink>
+        );
+      } else if (type === "title") {
+        returnValue = (
+          <SoftTypography
+            key={key}
+            display="block"
+            variant="caption"
+            fontWeight="bold"
+            textTransform="uppercase"
+            opacity={0.6}
+            pl={3}
+            mt={2}
+            mb={1}
+            ml={1}
+          >
+            {title}
+          </SoftTypography>
+        );
+      } else if (type === "divider") {
+        returnValue = <Divider key={key} />;
+      }
 
-    return returnValue;
-  });
+      return returnValue;
+    }
+  );
 
   return (
     <SidenavRoot {...rest} variant="permanent" ownerState={{ transparentSidenav, miniSidenav }}>
@@ -158,18 +164,16 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <Divider />
       <List>{renderRoutes}</List>
       <SoftBox pt={2} my={2} mx={2} mt="auto">
-        <SidenavCard />
         <SoftBox mt={2}>
           <SoftButton
-            component="a"
-            href="https://creative-tim.com/product/soft-ui-dashboard-pro-react"
-            target="_blank"
-            rel="noreferrer"
             variant="gradient"
             color={color}
             fullWidth
+            onClick={() => {
+              signOutUser();
+            }}
           >
-            upgrade to pro
+            Logout
           </SoftButton>
         </SoftBox>
       </SoftBox>

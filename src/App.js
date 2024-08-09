@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
@@ -47,6 +32,8 @@ import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "contex
 
 // Images
 import brand from "assets/images/logo-ct.png";
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -54,7 +41,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-
+  const userInfo = JSON.parse(localStorage.getItem("user"));
   // Cache for the rtl
   useMemo(() => {
     const cacheRtl = createCache({
@@ -102,7 +89,20 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return (
+          <Route
+            exact
+            path={route.route}
+            element={
+              route.isProtected ? (
+                <PrivateRoute>{route.component}</PrivateRoute>
+              ) : (
+                <PublicRoute>{route.component}</PublicRoute>
+              )
+            }
+            key={route.key}
+          />
+        );
       }
 
       return null;
@@ -132,35 +132,10 @@ export default function App() {
     </SoftBox>
   );
 
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand={brand}
-              brandName="Soft UI Dashboard"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {layout === "dashboard" && userInfo && (
         <>
           <Sidenav
             color={sidenavColor}
@@ -177,7 +152,11 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+
+        <Route
+          path="*"
+          element={<Navigate to={`${userInfo ? "/dashboard" : "authentication/sign-in"}`} />}
+        />
       </Routes>
     </ThemeProvider>
   );

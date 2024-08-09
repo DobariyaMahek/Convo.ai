@@ -16,11 +16,12 @@ Coded by www.creative-tim.com
 // Soft UI Dashboard React components
 import SoftButton from "components/SoftButton";
 import SoftBox from "components/SoftBox";
+import { signInWithGoogle } from "../../../../firebase";
 
-function Socials() {
+function Socials({}) {
   return (
     <SoftBox display="flex" justifyContent="center">
-      <SoftButton variant="outlined" color="light">
+      {/* <SoftButton variant="outlined" color="light">
         <svg width="24px" height="32px" viewBox="0 0 64 64" version="1.1">
           <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <g transform="translate(3.000000, 3.000000)" fillRule="nonzero">
@@ -43,8 +44,14 @@ function Socials() {
             </g>
           </svg>
         </SoftButton>
-      </SoftBox>
-      <SoftButton variant="outlined" color="light">
+      </SoftBox> */}
+      <SoftButton
+        variant="outlined"
+        color="light"
+        onClick={() => {
+          signInWithGoogle();
+        }}
+      >
         <svg width="24px" height="32px" viewBox="0 0 64 64" version="1.1">
           <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <g transform="translate(3.000000, 2.000000)" fillRule="nonzero">

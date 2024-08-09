@@ -1,25 +1,8 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
-
-// react-router-dom components
-import { Link } from "react-router-dom";
+import { useState, useCallback } from "react";
 
 // @mui material components
-import Switch from "@mui/material/Switch";
+import Card from "@mui/material/Card";
+import Checkbox from "@mui/material/Checkbox";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -28,73 +11,153 @@ import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 
 // Authentication layout components
-import CoverLayout from "layouts/authentication/components/CoverLayout";
+import BasicLayout from "layouts/authentication/components/BasicLayout";
+import Socials from "layouts/authentication/components/Socials";
+import Separator from "layouts/authentication/components/Separator";
 
 // Images
-import curved9 from "assets/images/curved-images/curved-6.jpg";
+import curved6 from "assets/images/curved-images/curved14.jpg";
+import { useNavigate } from "react-router-dom";
 
-function SignIn() {
-  const [rememberMe, setRememberMe] = useState(true);
+function index() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    agreement: true,
+  });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value, type, checked } = e.target;
+      setForm((prevForm) => ({
+        ...prevForm,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    },
+    [setForm]
+  );
+
+  const validateForm = useCallback(() => {
+    const { name, email, password } = form;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let errors = {
+      name: !name?.trim() ? "Name is required" : "",
+      email: !email?.trim()
+        ? "Email is required"
+        : !emailRegex.test(email)
+        ? "Please enter a valid email"
+        : "",
+      password: !password?.trim()
+        ? "Password is required"
+        : password.length < 6
+        ? "Password must be at least 6 characters long."
+        : "",
+    };
+
+    setError(errors);
+    if (errors?.name || errors?.email || errors?.password) {
+      return false;
+    } else {
+      return true;
+    }
+  }, [form]);
+
+  const handleSubmit = useCallback(() => {
+    if (validateForm()) {
+      const { name, email, password } = form;
+      localStorage.setItem("user", JSON.stringify({ name, email, password }));
+      navigate("/dashboard");
+    }
+  }, [form, validateForm]);
 
   return (
-    <CoverLayout
-      title="Welcome back"
-      description="Enter your email and password to sign in"
-      image={curved9}
+    <BasicLayout
+      title="Welcome!"
+      description="Use these awesome forms to login or create new account in your project for free."
+      image={curved6}
     >
-      <SoftBox component="form" role="form">
-        <SoftBox mb={2}>
-          <SoftBox mb={1} ml={0.5}>
-            <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Email
-            </SoftTypography>
-          </SoftBox>
-          <SoftInput type="email" placeholder="Email" />
-        </SoftBox>
-        <SoftBox mb={2}>
-          <SoftBox mb={1} ml={0.5}>
-            <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Password
-            </SoftTypography>
-          </SoftBox>
-          <SoftInput type="password" placeholder="Password" />
-        </SoftBox>
-        <SoftBox display="flex" alignItems="center">
-          <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-          <SoftTypography
-            variant="button"
-            fontWeight="regular"
-            onClick={handleSetRememberMe}
-            sx={{ cursor: "pointer", userSelect: "none" }}
-          >
-            &nbsp;&nbsp;Remember me
+      <Card>
+        <SoftBox p={3} mb={1} textAlign="center">
+          <SoftTypography variant="h5" fontWeight="medium">
+            Sign In with
           </SoftTypography>
         </SoftBox>
-        <SoftBox mt={4} mb={1}>
-          <SoftButton variant="gradient" color="info" fullWidth>
-            sign in
-          </SoftButton>
+        <SoftBox mb={2}>
+          <Socials  />
         </SoftBox>
-        <SoftBox mt={3} textAlign="center">
-          <SoftTypography variant="button" color="text" fontWeight="regular">
-            Don&apos;t have an account?{" "}
-            <SoftTypography
-              component={Link}
-              to="/authentication/sign-up"
-              variant="button"
-              color="info"
-              fontWeight="medium"
-              textGradient
-            >
-              Sign up
-            </SoftTypography>
-          </SoftTypography>
+        <Separator />
+        <SoftBox pt={2} pb={3} px={3}>
+          <SoftBox component="form" role="form">
+            <SoftBox mb={2}>
+              <SoftInput
+                placeholder="Name"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                error={error?.name}
+              />
+            </SoftBox>
+            <SoftBox mb={2}>
+              <SoftInput
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                error={error?.email}
+              />
+            </SoftBox>
+            <SoftBox mb={2}>
+              <SoftInput
+                type="password"
+                placeholder="Password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                error={error?.password}
+              />
+            </SoftBox>
+
+            <SoftBox display="flex" alignItems="center">
+              <Checkbox name="agreement" checked={form.agreement} onChange={handleChange} />
+              <SoftTypography
+                variant="button"
+                fontWeight="regular"
+                onClick={() =>
+                  setForm((prevForm) => ({
+                    ...prevForm,
+                    agreement: !prevForm.agreement,
+                  }))
+                }
+                sx={{ cursor: "pointer", userSelect: "none" }}
+              >
+                &nbsp;&nbsp;I agree to the&nbsp;
+              </SoftTypography>
+              <SoftTypography
+                component="a"
+                href="#"
+                variant="button"
+                fontWeight="bold"
+                textGradient
+              >
+                Terms and Conditions
+              </SoftTypography>
+            </SoftBox>
+            <SoftBox mt={4} mb={1}>
+              <SoftButton variant="gradient" color="dark" fullWidth onClick={handleSubmit}>
+                Sign In
+              </SoftButton>
+            </SoftBox>
+          </SoftBox>
         </SoftBox>
-      </SoftBox>
-    </CoverLayout>
+      </Card>
+    </BasicLayout>
   );
 }
 
-export default SignIn;
+export default index;

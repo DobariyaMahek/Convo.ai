@@ -39,11 +39,10 @@ Coded by www.creative-tim.com
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Calender from "layouts/calender";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
@@ -64,6 +63,7 @@ const routes = [
     icon: <Shop size="12px" />,
     component: <Dashboard />,
     noCollapse: true,
+    isProtected: true,
   },
   {
     type: "collapse",
@@ -73,6 +73,17 @@ const routes = [
     icon: <Office size="12px" />,
     component: <Tables />,
     noCollapse: true,
+    isProtected: true,
+  },
+  {
+    type: "collapse",
+    name: "Calender",
+    key: "calender",
+    route: "/calender",
+    icon: <Cube size="12px" />,
+    component: <Calender />,
+    noCollapse: true,
+    isProtected: true,
   },
   {
     type: "collapse",
@@ -82,26 +93,10 @@ const routes = [
     icon: <CreditCard size="12px" />,
     component: <Billing />,
     noCollapse: true,
+    isProtected: true,
   },
-  {
-    type: "collapse",
-    name: "Virtual Reality",
-    key: "virtual-reality",
-    route: "/virtual-reality",
-    icon: <Cube size="12px" />,
-    component: <VirtualReality />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    route: "/rtl",
-    icon: <Settings size="12px" />,
-    component: <RTL />,
-    noCollapse: true,
-  },
-  { type: "title", title: "Account Pages", key: "account-pages" },
+
+  // { type: "title", title: "Account Pages", key: "account-pages", isProtected: true },
   {
     type: "collapse",
     name: "Profile",
@@ -110,6 +105,7 @@ const routes = [
     icon: <CustomerSupport size="12px" />,
     component: <Profile />,
     noCollapse: true,
+    isProtected: true,
   },
   {
     type: "collapse",
@@ -119,6 +115,7 @@ const routes = [
     icon: <Document size="12px" />,
     component: <SignIn />,
     noCollapse: true,
+    isProtected: false,
   },
   {
     type: "collapse",
@@ -128,6 +125,7 @@ const routes = [
     icon: <SpaceShip size="12px" />,
     component: <SignUp />,
     noCollapse: true,
+    isProtected: false,
   },
 ];
 
