@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
 
-// Soft UI Dashboard React components
+// Convo.AI React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
@@ -18,8 +18,9 @@ import Separator from "layouts/authentication/components/Separator";
 // Images
 import curved6 from "assets/images/curved-images/curved14.jpg";
 import { useNavigate } from "react-router-dom";
-
+import { Box, Tab, Tabs } from "@mui/material";
 function index() {
+  document.title = "Convo.AI | SignIn";
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -28,7 +29,11 @@ function index() {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [value, setValue] = useState("Carehome");
 
+  const handleChangeTabs = (event, newValue) => {
+    setValue(newValue);
+  };
   const handleChange = useCallback(
     (e) => {
       const { name, value, type, checked } = e.target;
@@ -70,7 +75,8 @@ function index() {
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       const { name, email, password } = form;
-      localStorage.setItem("user", JSON.stringify({ name, email, password }));
+      localStorage.setItem("user", JSON.stringify({ name, email, password, role: value }));
+
       navigate("/dashboard");
     }
   }, [form, validateForm]);
@@ -82,13 +88,23 @@ function index() {
       image={curved6}
     >
       <Card>
-        <SoftBox p={3} mb={1} textAlign="center">
-          <SoftTypography variant="h5" fontWeight="medium">
-            Sign In with
-          </SoftTypography>
+        <SoftBox p={3} mb={3} textAlign="center">
+          <Box sx={{ width: "100%" }}>
+            <Tabs
+              value={value}
+              onChange={handleChangeTabs}
+              textColor="inherit" // Set text color to inherit to use custom color
+              indicatorColor="primary" // Set indicator color to primary
+              aria-label="secondary tabs example"
+            >
+              <Tab value="Carehome" label="Carehome" />
+              <Tab value="Patient" label="Patient" />
+              <Tab value="Family" label="Family" />
+            </Tabs>
+          </Box>
         </SoftBox>
         <SoftBox mb={2}>
-          <Socials  />
+          <Socials {...{ role: value }} />
         </SoftBox>
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>

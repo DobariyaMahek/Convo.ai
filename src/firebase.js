@@ -17,12 +17,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const signInWithGoogle = () => {
+const signInWithGoogle = (role) => {
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
       console.log("User Info:", user);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify({ ...user, role: role }));
       window.location.href = "/dashboard";
     })
     .catch((error) => {
@@ -33,8 +33,7 @@ const signInWithGoogle = () => {
 const signOutUser = () => {
   signOut(auth)
     .then(() => {
-      console.log("User signed out");
-      localStorage.removeItem("user");
+      localStorage.clear();
       window.location.href = "/authentication/sign-in";
     })
     .catch((error) => {

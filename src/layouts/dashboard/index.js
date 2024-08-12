@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v4.0.1
+* Convo.AI React - v4.0.1
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
@@ -17,11 +17,11 @@ Coded by www.creative-tim.com
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 
-// Soft UI Dashboard React components
+// Convo.AI React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 
-// Soft UI Dashboard React examples
+// Convo.AI React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -29,7 +29,7 @@ import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCar
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 
-// Soft UI Dashboard React base styles
+// Convo.AI React base styles
 import typography from "assets/theme/base/typography";
 
 // Dashboard layout components
@@ -41,10 +41,10 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
-
 function Dashboard() {
   const { size } = typography;
   const { chart, items } = reportsBarChartData;
+  document.title = "Convo.AI | Dashboard";
 
   return (
     <DashboardLayout>
@@ -144,7 +144,7 @@ function Dashboard() {
           </Grid>
         </Grid>
       </SoftBox>
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
 }

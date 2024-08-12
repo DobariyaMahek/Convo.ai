@@ -1,49 +1,42 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
-
-// @mui material components
 import Collapse from "@mui/material/Collapse";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Icon from "@mui/material/Icon";
-
-// Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
-
-// Custom styles for the SidenavCollapse
+import { useSoftUIController } from "context";
 import {
   collapseItem,
   collapseIconBox,
   collapseIcon,
   collapseText,
 } from "examples/Sidenav/styles/sidenavCollapse";
+import { NavLink } from "react-router-dom";
+import SoftTypography from "components/SoftTypography";
+import React from "react";
+import {
+  ArrowBack,
+  ArrowRight,
+  ArrowRightAlt,
+  ArrowRightAltSharp,
+  ArrowRightOutlined,
+  ArrowRightSharp,
+} from "@mui/icons-material";
 
-// Soft UI Dashboard React context
-import { useSoftUIController } from "context";
-
-function SidenavCollapse({ color, icon, name, children, active, noCollapse, open, ...rest }) {
+function SidenavCollapse({ color, icon, name, collapse, active, open, ...rest }) {
   const [controller] = useSoftUIController();
   const { miniSidenav, transparentSidenav } = controller;
 
+  // const [isOpen, setIsOpen] = React.useState(open);
+
+  // const handleClick = () => {
+  //   setIsOpen(!isOpen);
+  // };
+
   return (
     <>
-      <ListItem component="li">
+      <ListItem component="li" button>
         <SoftBox {...rest} sx={(theme) => collapseItem(theme, { active, transparentSidenav })}>
           <ListItemIcon
             sx={(theme) => collapseIconBox(theme, { active, transparentSidenav, color })}
@@ -54,39 +47,60 @@ function SidenavCollapse({ color, icon, name, children, active, noCollapse, open
               icon
             )}
           </ListItemIcon>
-
           <ListItemText
             primary={name}
             sx={(theme) => collapseText(theme, { miniSidenav, transparentSidenav, active })}
           />
         </SoftBox>
       </ListItem>
-      {children && (
-        <Collapse in={open} unmountOnExit>
-          {children}
-        </Collapse>
-      )}
+      <Collapse in={true} unmountOnExit>
+        {collapse &&
+          collapse.map(({ key, name, route, icon, isActive }) => (
+            <SoftBox key={key} pl={6} display="flex" alignItems="center">
+              <NavLink to={route} style={{ textDecoration: "none", width: "100%" }}>
+                <SoftBox display="flex" alignItems="center">
+                  <Icon>
+                    <ArrowRightAlt
+                      sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
+                    />
+                  </Icon>
+                  <SoftTypography
+                    variant="body2"
+                    fontWeight="100"
+                    py={1}
+                    pl={1}
+                    sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
+                  >
+                    {name}
+                  </SoftTypography>
+                </SoftBox>
+              </NavLink>
+            </SoftBox>
+          ))}
+      </Collapse>
     </>
   );
 }
 
-// Setting default values for the props of SidenavCollapse
 SidenavCollapse.defaultProps = {
-  color: "info",
+  color: "#66b5a3",
   active: false,
-  noCollapse: false,
-  children: false,
   open: false,
 };
 
-// Typechecking props for the SidenavCollapse
 SidenavCollapse.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.string,
   icon: PropTypes.node.isRequired,
   name: PropTypes.string.isRequired,
-  children: PropTypes.node,
+  collapse: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      route: PropTypes.string.isRequired,
+      icon: PropTypes.node,
+    })
+  ),
   active: PropTypes.bool,
-  noCollapse: PropTypes.bool,
   open: PropTypes.bool,
 };
 

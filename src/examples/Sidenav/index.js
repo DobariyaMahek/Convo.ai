@@ -1,46 +1,16 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useEffect } from "react";
-
-// react-router-dom components
+import React, { useEffect } from "react";
 import { useLocation, NavLink } from "react-router-dom";
-
-// prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
-
-// @mui material components
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
-
-// Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
-
-// Soft UI Dashboard React examples
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
-import SidenavCard from "examples/Sidenav/SidenavCard";
-
-// Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
-
-// Soft UI Dashboard React context
 import { useSoftUIController, setMiniSidenav } from "context";
 import { signOutUser } from "../../firebase";
 
@@ -54,33 +24,34 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
   useEffect(() => {
-    // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
       setMiniSidenav(dispatch, window.innerWidth < 1200);
     }
 
-    /** 
-     The event listener that's calling the handleMiniSidenav function when resizing the window.
-    */
     window.addEventListener("resize", handleMiniSidenav);
-
-    // Call the handleMiniSidenav function to set the state with the initial value.
     handleMiniSidenav();
 
-    // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleMiniSidenav);
-  }, [dispatch, location]);
-
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
+  }, [dispatch]);
+  console.log(routes);
   const renderRoutes = routes.map(
-    ({ type, name, icon, title, noCollapse, key, route, href, isProtected }) => {
-      let returnValue;
-      if (!isProtected) {
-        return;
-      }
-
+    ({
+      type,
+      name,
+      icon,
+      title,
+      noCollapse,
+      key,
+      route,
+      href,
+      collapse,
+      isProtected,
+      isActive,
+      isShow,
+    }) => {
+      if (!isProtected || !isShow) return null;
       if (type === "collapse") {
-        returnValue = href ? (
+        return href ? (
           <Link
             href={href}
             key={key}
@@ -92,24 +63,25 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               color={color}
               name={name}
               icon={icon}
-              active={key === collapseName}
+              active={isActive}
               noCollapse={noCollapse}
+              collapse={collapse}
             />
           </Link>
         ) : (
           <NavLink to={route} key={key}>
             <SidenavCollapse
               color={color}
-              key={key}
               name={name}
               icon={icon}
-              active={key === collapseName}
+              active={isActive}
               noCollapse={noCollapse}
+              collapse={collapse}
             />
           </NavLink>
         );
       } else if (type === "title") {
-        returnValue = (
+        return (
           <SoftTypography
             key={key}
             display="block"
@@ -126,10 +98,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </SoftTypography>
         );
       } else if (type === "divider") {
-        returnValue = <Divider key={key} />;
+        return <Divider key={key} />;
       }
 
-      return returnValue;
+      return null;
     }
   );
 
@@ -165,14 +137,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <List>{renderRoutes}</List>
       <SoftBox pt={2} my={2} mx={2} mt="auto">
         <SoftBox mt={2}>
-          <SoftButton
-            variant="gradient"
-            color={color}
-            fullWidth
-            onClick={() => {
-              signOutUser();
-            }}
-          >
+          <SoftButton variant="gradient" color={color} fullWidth onClick={() => signOutUser()}>
             Logout
           </SoftButton>
         </SoftBox>
@@ -181,18 +146,29 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   );
 }
 
-// Setting default values for the props of Sidenav
 Sidenav.defaultProps = {
-  color: "info",
+  color: "#66b5a3",
   brand: "",
 };
 
-// Typechecking props for the Sidenav
 Sidenav.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.string,
   brand: PropTypes.string,
   brandName: PropTypes.string.isRequired,
-  routes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  routes: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.string,
+      name: PropTypes.string,
+      icon: PropTypes.node,
+      title: PropTypes.string,
+      noCollapse: PropTypes.bool,
+      key: PropTypes.string.isRequired,
+      route: PropTypes.string,
+      href: PropTypes.string,
+      collapse: PropTypes.array,
+      isProtected: PropTypes.bool,
+    })
+  ).isRequired,
 };
 
 export default Sidenav;

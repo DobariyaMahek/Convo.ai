@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v4.0.1
+* Convo.AI React - v4.0.1
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
@@ -22,11 +22,11 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 
-// Soft UI Dashboard React components
+// Convo.AI React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 
-// Soft UI Dashboard React examples
+// Convo.AI React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import Footer from "examples/Footer";
 import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
@@ -49,8 +49,8 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
-
 function Overview() {
+  document.title = "Convo.AI | Profile";
   return (
     <DashboardLayout>
       <Header />
@@ -178,7 +178,7 @@ function Overview() {
         </Card>
       </SoftBox>
 
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
 }

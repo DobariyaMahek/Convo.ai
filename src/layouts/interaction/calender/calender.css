@@ -23,14 +23,14 @@
 .e-schedule .e-month-view .e-appointment,
 .e-schedule .e-vertical-view .e-day-wrapper .e-appointment,
 .e-quick-popup-wrapper .e-event-popup .e-popup-header {
-  background-color: #21a6fee1;
-  color: #fff;
+  background-color: #66b5a3;
+  color: #fff !important;
 }
 
 .e-btn.e-flat.e-primary:hover,
 .e-css.e-btn.e-flat.e-primary:hover {
   background-color: #17c2e811;
-  color: #21a6fee1;
+  color: #66b5a3;
 }
 
 .e-schedule .e-month-view .e-date-header-wrap table td.e-current-day,
@@ -256,7 +256,7 @@
   input
   ~ label.e-float-text,
 .e-datetime-wrapper .e-input-group-icon.e-icons.e-active {
-  color: #21a6fee1;
+  color: #66b5a3;
 }
 .e-schedule .e-vertical-view .e-current-timeline,
 .e-calendar .e-content td.e-today.e-selected:hover span.e-day,
@@ -270,7 +270,7 @@
 .e-bigger.e-small .e-calendar .e-content td.e-today span.e-day,
 .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day,
 .e-schedule .e-agenda-view .e-appointment {
-  border-color: #21a6fee1;
+  border-color: #66b5a3;
 }
 .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before,
 .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after,
@@ -291,19 +291,32 @@
   .e-float-line::before,
 .e-float-input.e-control-wrapper.e-input-group.e-float-icon-left
   .e-input-in-wrap
-  .e-float-line::after {
-  background: #21a6fee1;
+  .e-float-line::after,
+.e-bigger .e-more-popup-wrapper .e-appointment,
+.e-more-popup-wrapper .e-appointment,
+.e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
+.e-css.e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
+.e-schedule .e-new-event {
+  background: #66b5a3;
 }
 .e-schedule .e-schedule-toolbar .e-tbar-btn .e-tbar-btn-text {
   text-transform: capitalize;
 }
 .e-schedule {
-  margin: 20px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  /* margin: 20px; */
+  /* box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px; */
+  padding-top: 10px;
   border-radius: 10px;
   border: none;
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items,
 .e-schedule .e-schedule-toolbar {
   background: none;
+}
+.e-dlg-center-center,
+.e-dlg-overlay {
+  z-index: 9999 !important;
+}
+.e-popup.e-popup-open.e-dialog {
+  z-index: 99999 !important;
 }

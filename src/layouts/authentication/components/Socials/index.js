@@ -17,8 +17,9 @@ Coded by www.creative-tim.com
 import SoftButton from "components/SoftButton";
 import SoftBox from "components/SoftBox";
 import { signInWithGoogle } from "../../../../firebase";
-
-function Socials({}) {
+import PropTypes from "prop-types";
+function Socials(props) {
+  const { role } = props;
   return (
     <SoftBox display="flex" justifyContent="center">
       {/* <SoftButton variant="outlined" color="light">
@@ -49,7 +50,7 @@ function Socials({}) {
         variant="outlined"
         color="light"
         onClick={() => {
-          signInWithGoogle();
+          signInWithGoogle(role);
         }}
       >
         <svg width="24px" height="32px" viewBox="0 0 64 64" version="1.1">
@@ -78,5 +79,7 @@ function Socials({}) {
     </SoftBox>
   );
 }
-
+Socials.propTypes = {
+  role: PropTypes.string,
+};
 export default Socials;

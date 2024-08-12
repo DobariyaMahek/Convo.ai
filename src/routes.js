@@ -1,50 +1,10 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v4.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/** 
-  All of the routes for the Soft UI Dashboard React are added here,
-  You can add a new route, customize the routes and delete the routes here.
-
-  Once you add a new route on this file it will be visible automatically on
-  the Sidenav.
-
-  For adding a new route you can follow the existing routes in the routes array.
-  1. The `type` key with the `collapse` value is used for a route.
-  2. The `type` key with the `title` value is used for a title inside the Sidenav. 
-  3. The `type` key with the `divider` value is used for a divider between Sidenav items.
-  4. The `name` key is used for the name of the route on the Sidenav.
-  5. The `key` key is used for the key of the route (It will help you with the key prop inside a loop).
-  6. The `icon` key is used for the icon of the route on the Sidenav, you have to add a node.
-  7. The `collapse` key is used for making a collapsible item on the Sidenav that has other routes
-  inside (nested routes), you need to pass the nested routes inside an array as a value for the `collapse` key.
-  8. The `route` key is used to store the route location which is used for the react router.
-  9. The `href` key is used to store the external links location.
-  10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
-  10. The `component` key is used to store the component of its route.
-*/
-
-// Soft UI Dashboard React layouts
+import React from "react";
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-import Calender from "layouts/calender";
-
-// Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
 import Office from "examples/Icons/Office";
 import Settings from "examples/Icons/Settings";
@@ -53,80 +13,217 @@ import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
+import Doctors from "examples/Icons/Doctors";
+import Receptions from "examples/Icons/Receptions";
+import Patients from "examples/Icons/Patients";
+import { useLocation } from "react-router-dom";
+import Patient from "layouts/patient";
+import CreatePatient from "layouts/patient/CreatePatient";
+import ChatBot from "layouts/interaction";
+import CalendarComponent from "layouts/interaction/calender";
+import Package from "layouts/package";
+import CallHistory from "layouts/CallHistory";
 
-const routes = [
-  {
-    type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    route: "/dashboard",
-    icon: <Shop size="12px" />,
-    component: <Dashboard />,
-    noCollapse: true,
-    isProtected: true,
-  },
-  {
-    type: "collapse",
-    name: "Tables",
-    key: "tables",
-    route: "/tables",
-    icon: <Office size="12px" />,
-    component: <Tables />,
-    noCollapse: true,
-    isProtected: true,
-  },
-  {
-    type: "collapse",
-    name: "Calender",
-    key: "calender",
-    route: "/calender",
-    icon: <Cube size="12px" />,
-    component: <Calender />,
-    noCollapse: true,
-    isProtected: true,
-  },
-  {
-    type: "collapse",
-    name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <CreditCard size="12px" />,
-    component: <Billing />,
-    noCollapse: true,
-    isProtected: true,
-  },
+const useRoutes = () => {
+  const location = useLocation();
+  const { pathname } = location;
+  const userInfo = JSON.parse(localStorage.getItem("user"));
+  const collapseName = pathname;
 
-  // { type: "title", title: "Account Pages", key: "account-pages", isProtected: true },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    route: "/profile",
-    icon: <CustomerSupport size="12px" />,
-    component: <Profile />,
-    noCollapse: true,
-    isProtected: true,
-  },
-  {
-    type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    route: "/authentication/sign-in",
-    icon: <Document size="12px" />,
-    component: <SignIn />,
-    noCollapse: true,
-    isProtected: false,
-  },
-  {
-    type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    route: "/authentication/sign-up",
-    icon: <SpaceShip size="12px" />,
-    component: <SignUp />,
-    noCollapse: true,
-    isProtected: false,
-  },
-];
+  return [
+    {
+      type: "collapse",
+      name: "Dashboard",
+      key: "dashboard",
+      route: "/dashboard",
+      icon: <Shop size="12px" />,
+      component: <Dashboard />,
+      noCollapse: true,
+      isProtected: true,
+      isActive: collapseName === "/dashboard",
+      isShow: userInfo?.role == "Carehome",
+    },
+    {
+      type: "collapse",
+      name: "Patients Management",
+      key: "patients",
+      noCollapse: true,
+      isProtected: true,
+      icon: <Patients size="12px" />,
+      isActive: collapseName === "/patients" || collapseName === "/create-patients",
+      collapse: [
+        {
+          name: "Patient List",
+          key: "patient-list",
+          route: "/patients",
+          component: <Patient />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/patients",
+        },
+        {
+          name: "Create Patient",
+          key: "create-patient",
+          route: "/create-patients",
+          component: <CreatePatient />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/create-patients",
+        },
+      ],
+      isShow: userInfo?.role == "Carehome",
+    },
+    {
+      type: "collapse",
+      name: "Patient Interaction",
+      key: "chatbot",
+      noCollapse: true,
+      isProtected: true,
+      icon: <Patients size="12px" />,
+      isActive: collapseName === "/chatbot" || collapseName === "/call-calender",
+      collapse: [
+        {
+          name: "Chatbot",
+          key: "chatbot",
+          route: "/chatbot",
+          component: <ChatBot />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/chatbot",
+        },
+        {
+          name: "Call Calender",
+          key: "call-calender",
+          route: "/call-calender",
+          component: <CalendarComponent />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/call-calender",
+        },
+      ],
+      isShow: userInfo?.role == "Carehome",
+    },
 
-export default routes;
+    {
+      type: "collapse",
+      name: "Package",
+      key: "package",
+      route: "/package",
+      icon: <Receptions size="12px" />,
+      component: <Package />,
+      noCollapse: true,
+      isProtected: true,
+      isActive: collapseName === "/package",
+      isShow: userInfo?.role == "Carehome",
+    },
+    // {
+    //   type: "collapse",
+    //   name: "Doctors",
+    //   key: "doctors",
+    //   route: "/doctors",
+    //   icon: <Doctors size="12px" />,
+    //   component: <Tables />,
+    //   noCollapse: true,
+    //   isProtected: true,
+    //   isActive: collapseName === "/doctors",
+    // },
+    // {
+    //   type: "collapse",
+    //   name: "Appointments",
+    //   key: "appointments",
+    //   route: "/appointments",
+    //   icon: <Cube size="12px" />,
+    //   component: <Calender />,
+    //   noCollapse: true,
+    //   isProtected: true,
+    //   isActive: collapseName === "/appointments",
+    // },
+    // {
+    //   type: "collapse",
+    //   name: "Payments",
+    //   key: "payments",
+    //   route: "/payments",
+    //   icon: <CreditCard size="12px" />,
+    //   component: <Billing />,
+    //   noCollapse: true,
+    //   isProtected: true,
+    //   isActive: collapseName === "/payments",
+    // },
+    {
+      type: "collapse",
+      name: "Profile",
+      key: "profile",
+      route: "/profile",
+      icon: <CustomerSupport size="12px" />,
+      component: <Profile />,
+      noCollapse: true,
+      isProtected: true,
+      isActive: collapseName === "/profile",
+      isShow: userInfo?.role == "Carehome",
+    },
+    {
+      type: "collapse",
+      name: "Bot Interaction",
+      key: "chatbot",
+      route: "/chatbot",
+      component: <ChatBot />,
+      noCollapse: true,
+      isProtected: true,
+      icon: <Patients size="12px" />,
+      isActive: collapseName === "/chatbot",
+      isShow: userInfo?.role == "Patient",
+    },
+    {
+      type: "collapse",
+      name: "Call Calender",
+      key: "call-history",
+      noCollapse: true,
+      isProtected: true,
+      icon: <Patients size="12px" />,
+      isActive: collapseName === "/call-history" || collapseName === "/call-calender",
+      collapse: [
+        {
+          name: "Call History",
+          key: "call-history",
+          route: "/call-history",
+          component: <CallHistory />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/call-history",
+        },
+        {
+          name: "Call Calender",
+          key: "call-calender",
+          route: "/call-calender",
+          component: <CalendarComponent />,
+          noCollapse: true,
+          isProtected: true,
+          isActive: collapseName === "/call-calender",
+        },
+      ],
+      isShow: userInfo?.role == "Patient" || userInfo?.role == "Family",
+    },
+    {
+      type: "collapse",
+      name: "Sign In",
+      key: "sign-in",
+      route: "/authentication/sign-in",
+      icon: <Document size="12px" />,
+      component: <SignIn />,
+      noCollapse: true,
+      isProtected: false,
+    },
+    {
+      type: "collapse",
+      name: "Sign Up",
+      key: "sign-up",
+      route: "/authentication/sign-up",
+      icon: <SpaceShip size="12px" />,
+      component: <SignUp />,
+      noCollapse: true,
+      isProtected: false,
+    },
+  ];
+};
+
+export default useRoutes;

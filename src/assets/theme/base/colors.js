@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v3.1.0
+* Convo.AI React - v3.1.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-pro-react
@@ -14,9 +14,9 @@ Coded by www.creative-tim.com
 */
 
 /**
- * The base colors for the Soft UI Dashboard React.
+ * The base colors for the Convo.AI React.
  * You can add new color using this file.
- * You can customized the colors for the entire Soft UI Dashboard React using thie file.
+ * You can customized the colors for the entire Convo.AI React using thie file.
  */
 
 const colors = {
@@ -55,7 +55,7 @@ const colors = {
   },
 
   info: {
-    main: "#17c1e8",
+    main: "#66B5A3",
     focus: "#3acaeb",
   },
 
@@ -108,8 +108,8 @@ const colors = {
     },
 
     info: {
-      main: "#2152ff",
-      state: "#21d4fd",
+      main: "#66B5A3",
+      state: "#66B5A3",
     },
 
     success: {

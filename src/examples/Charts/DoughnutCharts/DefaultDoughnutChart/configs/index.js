@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Soft UI Dashboard React - v4.0.1
+* Convo.AI React - v4.0.1
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 /* eslint-disable no-dupe-keys */
-// Soft UI Dashboard React base styles
+// Convo.AI React base styles
 import colors from "assets/theme/base/colors";
 
 const { gradients, dark } = colors;
