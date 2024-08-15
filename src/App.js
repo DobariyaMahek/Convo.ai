@@ -10,7 +10,7 @@ import theme from "assets/theme";
 import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import DoctorImg from "../src/assets/images/doctor.png";
+import DoctorImg from "../src/assets/images/welcomeImage.jpg";
 
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import brand from "assets/images/logo-ct.png";
@@ -22,12 +22,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import useRoutes from "routes";
 import SoftTypography from "components/SoftTypography";
 import { Image } from "@mui/icons-material";
+import Loader from "components/Loader";
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
-  const userInfo = JSON.parse(localStorage.getItem("user"));
+  const userInfo = JSON.parse(localStorage.getItem("authUser"));
   const isShowWelcome = JSON.parse(localStorage.getItem("welcomeShown"));
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
   const routes = useRoutes();
@@ -117,6 +118,7 @@ export default function App() {
   );
   return (
     <ThemeProvider theme={theme}>
+      {false && <Loader />}
       <CssBaseline />
       {showWelcomeMessage && (
         <div className={`full-screen-welcome`}>

@@ -76,7 +76,7 @@ function index() {
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       const { name, email, password } = form;
-      localStorage.setItem("user", JSON.stringify({ name, email, password, role: value }));
+      localStorage.setItem("authUser", JSON.stringify({ name, email, password, role: value }));
 
       navigate("/dashboard");
     }

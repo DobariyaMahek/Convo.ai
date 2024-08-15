@@ -45,8 +45,8 @@ const colors = {
   },
 
   primary: {
-    main: "#cb0c9f",
-    focus: "#ad0a87",
+    main: "#66b5a3",
+    focus: "#66b5a3",
   },
 
   secondary: {

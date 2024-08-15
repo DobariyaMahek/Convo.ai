@@ -27,7 +27,7 @@ import CallHistory from "layouts/CallHistory";
 const useRoutes = () => {
   const location = useLocation();
   const { pathname } = location;
-  const userInfo = JSON.parse(localStorage.getItem("user"));
+  const userInfo = JSON.parse(localStorage.getItem("authUser"));
   const collapseName = pathname;
 
   return [
