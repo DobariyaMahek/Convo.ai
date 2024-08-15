@@ -41,7 +41,7 @@ const useRoutes = () => {
       noCollapse: true,
       isProtected: true,
       isActive: collapseName === "/dashboard",
-      isShow: userInfo?.role == "Carehome",
+      isShow: true,
     },
     {
       type: "collapse",
@@ -60,6 +60,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/patients",
+          isShow: userInfo?.role == "Carehome",
         },
         {
           name: "Create Patient",
@@ -69,6 +70,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/create-patients",
+          isShow: userInfo?.role == "Carehome",
         },
       ],
       isShow: userInfo?.role == "Carehome",
@@ -90,6 +92,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/chatbot",
+          isShow: userInfo?.role == "Carehome",
         },
         {
           name: "Call Calender",
@@ -99,6 +102,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-calender",
+          isShow: userInfo?.role == "Carehome",
         },
       ],
       isShow: userInfo?.role == "Carehome",
@@ -114,7 +118,7 @@ const useRoutes = () => {
       noCollapse: true,
       isProtected: true,
       isActive: collapseName === "/package",
-      isShow: userInfo?.role == "Carehome",
+      isShow: userInfo?.role == "Carehome" || userInfo?.role == "Family",
     },
     // {
     //   type: "collapse",
@@ -190,6 +194,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-history",
+          isShow: userInfo?.role == "Patient" || userInfo?.role == "Family",
         },
         {
           name: "Call Calender",
@@ -199,6 +204,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-calender",
+          isShow: userInfo?.role == "Patient",
         },
       ],
       isShow: userInfo?.role == "Patient" || userInfo?.role == "Family",

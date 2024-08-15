@@ -55,28 +55,31 @@ function SidenavCollapse({ color, icon, name, collapse, active, open, ...rest })
       </ListItem>
       <Collapse in={true} unmountOnExit>
         {collapse &&
-          collapse.map(({ key, name, route, icon, isActive }) => (
-            <SoftBox key={key} pl={6} display="flex" alignItems="center">
-              <NavLink to={route} style={{ textDecoration: "none", width: "100%" }}>
-                <SoftBox display="flex" alignItems="center">
-                  <Icon>
-                    <ArrowRightAlt
-                      sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
-                    />
-                  </Icon>
-                  <SoftTypography
-                    variant="body2"
-                    fontWeight="100"
-                    py={1}
-                    pl={1}
-                    sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
-                  >
-                    {name}
-                  </SoftTypography>
+          collapse.map(
+            ({ key, name, route, icon, isActive, isShow }) =>
+              isShow && (
+                <SoftBox key={key} pl={6} display="flex" alignItems="center">
+                  <NavLink to={route} style={{ textDecoration: "none", width: "100%" }}>
+                    <SoftBox display="flex" alignItems="center">
+                      <Icon>
+                        <ArrowRightAlt
+                          sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
+                        />
+                      </Icon>
+                      <SoftTypography
+                        variant="body2"
+                        fontWeight="100"
+                        py={1}
+                        pl={1}
+                        sx={{ fontSize: "13px", color: `${isActive ? "#66b5a3" : ""}` }}
+                      >
+                        {name}
+                      </SoftTypography>
+                    </SoftBox>
+                  </NavLink>
                 </SoftBox>
-              </NavLink>
-            </SoftBox>
-          ))}
+              )
+          )}
       </Collapse>
     </>
   );

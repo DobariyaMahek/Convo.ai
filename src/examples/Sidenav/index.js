@@ -33,7 +33,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch]);
-  console.log(routes);
   const renderRoutes = routes.map(
     ({
       type,

@@ -21,7 +21,6 @@ const signInWithGoogle = (role) => {
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      console.log("User Info:", user);
       localStorage.setItem("user", JSON.stringify({ ...user, role: role }));
       window.location.href = "/dashboard";
     })

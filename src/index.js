@@ -21,9 +21,9 @@ import App from "App";
 // Convo.AI React Context Provider
 import { SoftUIControllerProvider } from "context";
 import { registerLicense } from "@syncfusion/ej2-base";
-registerLicense(
-  "Ngo9BigBOggjHTQxAR8/V1NCaF1cWWhAYVtpR2Nbe05yflRFalhVVAciSV9jS3pTfkVqWXpfeHRUQWRaUg=="
-);
+// registerLicense(
+//   "Ngo9BigBOggjHTQxAR8/V1NCaF1cWWhAYVtpR2Nbe05yflRFalhVVAciSV9jS3pTfkVqWXpfeHRUQWRaUg=="
+// );
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>

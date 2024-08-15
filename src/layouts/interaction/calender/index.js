@@ -1,11 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
 import { Card } from "@mui/material";
 import {
   ScheduleComponent,
@@ -17,37 +13,47 @@ import {
   Inject,
 } from "@syncfusion/ej2-react-schedule";
 import "./calender.css";
-function CalendarComponent() {
-  const [eventsData, setEventsData] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const localizer = momentLocalizer(moment);
-  document.title = "Convo.AI | Call Calender";
-  const eventData = [
-    {
-      Id: 1,
-      Subject: "Meeting",
-      StartTime: new Date("Fri Aug 09 2024 18:05:23 GMT+0530 (India Standard Time)"),
-      EndTime: new Date("Fri Aug 09 2024 18:45:23 GMT+0530 (India Standard Time)"),
-    },
-    {
-      Id: 2,
-      Subject: "Conference",
-      StartTime: new Date(2024, 7, 11, 9, 0),
-      EndTime: new Date(2024, 7, 11, 11, 0),
-    },
-    {
-      Id: 3,
-      Subject: "Webinar",
-      StartTime: new Date(2024, 7, 12, 14, 0),
-      EndTime: new Date(2024, 7, 12, 16, 0),
-    },
-  ];
-  const handleSelect = ({ start, end }) => {
-    setSelectedSlot({ start, end });
-  };
 
-  const handleSaveEvent = ({ title, start, end }) => {
-    setEventsData([...eventsData, { title, start, end }]);
+function CalendarComponent() {
+  // Load initial events from localStorage
+  const [eventsData, setEventsData] = useState(() => {
+    const savedEvents = JSON.parse(localStorage.getItem("appointment")) || [];
+    return savedEvents;
+  });
+
+  useEffect(() => {
+    // Update localStorage whenever eventsData changes
+    localStorage.setItem("appointment", JSON.stringify(eventsData));
+  }, [eventsData]);
+
+  document.title = "Convo.AI | Call Calender";
+
+  const handleActionComplete = (args) => {
+    if (args.requestType === "eventCreated") {
+      const newEvent = args.addedRecords[0];
+
+      // Generate a unique ID if necessary
+      if (!newEvent.Id) {
+        newEvent.Id = new Date().getTime(); // Example: Use timestamp as unique ID
+      }
+
+      // Prevent duplicates by checking if the ID already exists
+      const isDuplicate = eventsData.some((event) => event.Id === newEvent.Id);
+      if (!isDuplicate) {
+        const updatedEvents = [...eventsData, newEvent];
+        setEventsData(updatedEvents); // Update the state and localStorage via useEffect
+      }
+    } else if (args.requestType === "eventChanged") {
+      const updatedEvent = args.changedRecords[0];
+      const updatedEvents = eventsData.map((item) =>
+        item.Id === updatedEvent.Id ? updatedEvent : item
+      );
+      setEventsData(updatedEvents); // Update the state and localStorage via useEffect
+    } else if (args.requestType === "eventRemoved") {
+      const updatedEvent = args.deletedRecords[0];
+      const updatedEvents = eventsData.filter((item) => item.Id !== updatedEvent.Id);
+      setEventsData(updatedEvents);
+    }
   };
 
   return (
@@ -60,7 +66,8 @@ function CalendarComponent() {
               <ScheduleComponent
                 currentView="Month"
                 height={"810px"}
-                eventSettings={{ dataSource: eventData }}
+                eventSettings={{ dataSource: eventsData }}
+                actionComplete={handleActionComplete}
               >
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
               </ScheduleComponent>
@@ -68,7 +75,6 @@ function CalendarComponent() {
           </Card>
         </SoftBox>
       </SoftBox>
-      {/* <Footer /> */}
     </DashboardLayout>
   );
 }

@@ -62,7 +62,7 @@ function CallHistory() {
                           onClick={() => handleRowClick(row)}
                           style={{ cursor: "pointer" }}
                         >
-                          <TableCell>{row.name}</TableCell>
+                          <TableCell sx={{ fontSize: "15px" }}>{row.name}</TableCell>
                           <TableCell>
                             {row.status === "received" ? (
                               <CallReceivedIcon color="#66b5a3" />
@@ -70,7 +70,7 @@ function CallHistory() {
                               <CallMissedIcon color="error" />
                             )}
                           </TableCell>
-                          <TableCell>{row.duration}</TableCell>
+                          <TableCell sx={{ fontSize: "12px" }}>{row.duration}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -86,19 +86,27 @@ function CallHistory() {
                 <SoftTypography variant="h6">Call Details</SoftTypography>
                 {selectedCall ? (
                   <SoftBox mt={2}>
-                    <SoftTypography variant="body1">
+                    <SoftTypography variant="body1" sx={{ fontSize: "15px" }}>
                       <strong>Name:</strong> {selectedCall.name}
                     </SoftTypography>
-                    <SoftTypography variant="body1">
+                    <SoftTypography variant="body1" sx={{ fontSize: "15px" }}>
                       <strong>Status:</strong> {selectedCall.status}
                     </SoftTypography>
-                    <SoftTypography variant="body1">
+                    <SoftTypography variant="body1" sx={{ fontSize: "15px" }}>
                       <strong>Duration:</strong> {selectedCall.duration}
                     </SoftTypography>
                     {/* Add more details if needed */}
                   </SoftBox>
                 ) : (
-                  <SoftTypography variant="body1" my={5}>
+                  <SoftTypography
+                    variant="body1"
+                    sx={{
+                      fontSize: "15px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
                     Please select a call from the list to see the details.
                   </SoftTypography>
                 )}

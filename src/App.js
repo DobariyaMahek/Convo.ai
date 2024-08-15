@@ -10,6 +10,7 @@ import theme from "assets/theme";
 import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import DoctorImg from "../src/assets/images/doctor.png";
 
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
 import brand from "assets/images/logo-ct.png";
@@ -19,6 +20,8 @@ import "./App.css"; // Import your CSS file for animations
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useRoutes from "routes";
+import SoftTypography from "components/SoftTypography";
+import { Image } from "@mui/icons-material";
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
@@ -112,7 +115,6 @@ export default function App() {
       </Icon>
     </SoftBox>
   );
-  console.log(showWelcomeMessage);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -126,8 +128,15 @@ export default function App() {
             }}
           >
             <CloseIcon />
-          </IconButton>
-          <h1>Welcome to Convo.AI!</h1>
+          </IconButton>{" "}
+          <SoftTypography sx={{ textAlign: "center" }}>
+            <img src={DoctorImg} alt="img" height="300px" />
+            <h1>Welcome Back to Convo.AI!</h1>
+            <p>
+              We’re thrilled to have you here again. Let’s continue creating meaningful
+              conversations and driving innovation together.
+            </p>
+          </SoftTypography>
         </div>
       )}
       {layout === "dashboard" && userInfo && (

@@ -57,6 +57,8 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import burceMars from "assets/images/bruce-mars.jpg";
+// import SoftAvatar from "components/SoftAvatar";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -147,12 +149,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <SoftBox pr={1}>
+            {/* <SoftBox pr={1}>
               <SoftInput
                 placeholder="Type here..."
                 icon={{ component: "search", direction: "left" }}
               />
-            </SoftBox>
+            </SoftBox> */}
             <SoftBox color={light ? "white" : "inherit"}>
               {/* <Link to="/authentication/sign-in">
                 <IconButton sx={navbarIconButton} size="small">
@@ -203,6 +205,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
               </IconButton>
               {renderMenu()}
             </SoftBox>
+
+            {/* <SoftAvatar
+              src={burceMars}
+              alt="profile-image"
+              variant="rounded"
+              size="sx"
+              shadow="sm"
+            /> */}
           </SoftBox>
         )}
       </Toolbar>

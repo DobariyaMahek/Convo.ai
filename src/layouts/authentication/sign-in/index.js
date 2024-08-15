@@ -18,7 +18,8 @@ import Separator from "layouts/authentication/components/Separator";
 // Images
 import curved6 from "assets/images/curved-images/curved14.jpg";
 import { useNavigate } from "react-router-dom";
-import { Box, Tab, Tabs } from "@mui/material";
+import { AppBar, Box, Tab, Tabs } from "@mui/material";
+import "./sign-in.css";
 function index() {
   document.title = "Convo.AI | SignIn";
   const [form, setForm] = useState({
@@ -83,25 +84,26 @@ function index() {
 
   return (
     <BasicLayout
-      title="Welcome!"
-      description="Use these awesome forms to login or create new account in your project for free."
+      title="Welcome to Convo.AI!"
+      description="Securely manage your healthcare, stay informed, and connect with your care team. Log in to get started."
       image={curved6}
     >
       <Card>
         <SoftBox p={3} mb={3} textAlign="center">
-          <Box sx={{ width: "100%" }}>
+          <AppBar position="static">
             <Tabs
+              // orientation={tabsOrientation}
               value={value}
               onChange={handleChangeTabs}
-              textColor="inherit" // Set text color to inherit to use custom color
-              indicatorColor="primary" // Set indicator color to primary
-              aria-label="secondary tabs example"
+              sx={{
+                background: "transparent",
+              }}
             >
               <Tab value="Carehome" label="Carehome" />
               <Tab value="Patient" label="Patient" />
               <Tab value="Family" label="Family" />
             </Tabs>
-          </Box>
+          </AppBar>
         </SoftBox>
         <SoftBox mb={2}>
           <Socials {...{ role: value }} />

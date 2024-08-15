@@ -42,7 +42,10 @@
   font-size: 2rem;
   color: #66b5a3;
 }
-
+.full-screen-welcome p {
+  font-size: 1rem;
+  color: gray;
+}
 .close-icon {
   position: fixed !important; /* Change to fixed to ensure it stays in the corner */
   top: 20px;
@@ -57,4 +60,22 @@
 .close-icon:hover {
   animation: rotateOnHover 1s ease;
   color: #66b5a3; /* Change color on hover */
+}
+@keyframes walkanim {
+  to {
+    background-position: 100% 0;
+  }
+}
+@keyframes stroll {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(500%);
+  }
+}
+
+/* Target the Syncfusion license message and hide it */
+div[style*="position: fixed"][style*="z-index: 999999999"] {
+  display: none !important;
 }
