@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SoftTypography from "components/SoftTypography";
+import toast from "react-hot-toast";
 function CreatePatient() {
   const [controller] = useSoftUIController();
   const { sidenavColor } = controller;
@@ -42,6 +43,7 @@ function CreatePatient() {
     phoneNumber: "",
     email: "",
     profileImage: null,
+    hasEmail: "yes",
   });
   const [familyInfo, setFamilyInfo] = useState([
     { relation: "", name: "", email: "", hasEmail: "yes" },
@@ -58,10 +60,21 @@ function CreatePatient() {
   const validateGeneralInfo = () => {
     let newErrors = {};
     Object.keys(generalInfo).forEach((key) => {
-      if (!generalInfo[key] && key !== "profileImage") {
+      if (!generalInfo[key] && key !== "PhoneNumber" && key !== "Email") {
         newErrors[key] = `${key} is required`;
-      } else if (generalInfo[key] && key === "email" && !EMAIL_REGAX?.test(generalInfo[key])) {
-        newErrors[key] = `${key} is not valid`;
+      }
+      if (!generalInfo.email) {
+        newErrors.email = `Email is required`;
+      }
+      if (
+        generalInfo.email &&
+        generalInfo.hasEmail == "yes" &&
+        !EMAIL_REGAX?.test(generalInfo.email)
+      ) {
+        newErrors.email = `Email is not valid`;
+      }
+      if (!generalInfo.phoneNumber && generalInfo.hasEmail == "no") {
+        newErrors.phoneNumber = "PhoneNumber is required";
       }
     });
     setErrors(newErrors);
@@ -76,6 +89,10 @@ function CreatePatient() {
         memberErrors.relation = "Relation is required";
         valid = false;
       }
+      if (member.relation === "Other" && !member?.otherRelation) {
+        memberErrors.otherRelation = "Other Relation is required";
+        valid = false;
+      }
       if (!member.name) {
         memberErrors.name = "Name is required";
         valid = false;
@@ -83,8 +100,9 @@ function CreatePatient() {
       if (!member.email && member.hasEmail == "yes") {
         memberErrors.email = "Email is required";
         valid = false;
-      } else if (member.email && member.hasEmail == "yes" && !EMAIL_REGAX?.test(generalInfo[key])) {
+      } else if (member.email && member.hasEmail == "yes" && !EMAIL_REGAX?.test(member.email)) {
         memberErrors.email = `Email is not valid`;
+        valid = false;
       }
       if (!member.phoneNumber && member.hasEmail == "no") {
         memberErrors.phoneNumber = "PhoneNumber is required";
@@ -141,10 +159,13 @@ function CreatePatient() {
     validateGeneralInfo();
     validateFamilyInfo();
     validateMedicalHistory();
+    console.log(validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory());
     if (validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory()) {
       if (!familyInfo?.length) {
-       
+        toast("Minimum one family member is required!");
+        return;
       }
+
       console.log("Form Submitted", { generalInfo, familyInfo, medicalHistory });
       // Handle form submission logic
     }
@@ -241,20 +262,7 @@ function CreatePatient() {
                       onChange={handleInputChange}
                       error={Boolean(errors.lastName)}
                     />
-                    <label>
-                      Email <span>* {errors.email && errors.email}</span>
-                    </label>
-                    <SoftInput
-                      fullWidth
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={generalInfo.email}
-                      onChange={handleInputChange}
-                      error={Boolean(errors.email)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
+
                     <label>
                       Date of Birth <span>* {errors.birthdate && errors.birthdate}</span>
                     </label>
@@ -269,19 +277,61 @@ function CreatePatient() {
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <label>
-                      Phone Number <span>* {errors.phoneNumber && errors.phoneNumber}</span>
-                    </label>
-                    <SoftInput
-                      fullWidth
-                      label="Phone number"
-                      name="phoneNumber"
-                      type="number"
-                      value={generalInfo.phoneNumber}
-                      onChange={handleInputChange}
-                      error={Boolean(errors.phoneNumber)}
-                    />
+                    <FormControl component="fieldset">
+                      <label>Do they have an email?</label>
+                      <RadioGroup
+                        aria-label="hasEmail"
+                        name="hasEmail"
+                        value={generalInfo.hasEmail}
+                        onChange={handleInputChange}
+                        sx={{ marginLeft: "10px" }}
+                      >
+                        <FormControlLabel
+                          value="yes"
+                          control={<Radio />}
+                          label="Yes"
+                          color="#66b5a3"
+                        />
+                        <FormControlLabel
+                          value="no"
+                          control={<Radio />}
+                          label="No"
+                          color="#66b5a3"
+                        />
+                      </RadioGroup>
+                    </FormControl>
                   </Grid>
+                  {generalInfo.hasEmail === "yes" ? (
+                    <Grid item xs={12} md={6}>
+                      <label>
+                        Email <span>* {errors.email && errors.email}</span>
+                      </label>
+                      <SoftInput
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={generalInfo.email}
+                        onChange={handleInputChange}
+                        error={Boolean(errors.email)}
+                      />
+                    </Grid>
+                  ) : (
+                    <Grid item xs={12} md={6}>
+                      <label>
+                        Phone Number <span>* {errors.phoneNumber && errors.phoneNumber}</span>
+                      </label>
+                      <SoftInput
+                        fullWidth
+                        label="Phone Number"
+                        name="phoneNumber"
+                        type="number"
+                        value={generalInfo.phoneNumber}
+                        onChange={handleInputChange}
+                        error={Boolean(errors.phoneNumber)}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
               </SoftBox>
             </Card>
@@ -356,7 +406,6 @@ function CreatePatient() {
                   </Grid>
                 </Grid>
                 <SoftBox>
-                  {console.log(familyInfo)}
                   {familyInfo.map((member, index) => (
                     <div
                       key={index}
@@ -364,13 +413,13 @@ function CreatePatient() {
                         position: "relative", // Enable absolute positioning for child elements
                         border: "0.0625rem solid #d2d6da",
                         borderRadius: "0.5rem",
-                        padding: "10px 20px",
+                        padding: "10px 20px 20px 20px",
                         marginTop: "10px",
                       }}
                     >
                       {/* Delete icon */}
                       <IconButton
-                        color="error"
+                        color="primary"
                         onClick={() => {
                           const updatedFamilyInfo = [...familyInfo];
                           updatedFamilyInfo.splice(index, 1);
@@ -419,15 +468,20 @@ function CreatePatient() {
                             <option value="Other">Other</option>
                           </select>
                           {member.relation === "Other" && (
-                            <SoftInput
-                              fullWidth
-                              label="Specify Relation"
-                              name="otherRelation"
-                              type="text"
-                              value={member.otherRelation || ""}
-                              onChange={(event) => handleFamilyChange(index, event)}
-                              error={Boolean(familyErrors[index]?.otherRelation)}
-                            />
+                            <>
+                              <label>
+                                <span>{familyErrors[index]?.otherRelation}</span>
+                              </label>
+                              <SoftInput
+                                fullWidth
+                                label="Specify Relation"
+                                name="otherRelation"
+                                type="text"
+                                value={member.otherRelation || ""}
+                                onChange={(event) => handleFamilyChange(index, event)}
+                                error={Boolean(familyErrors[index]?.otherRelation)}
+                              />
+                            </>
                           )}
                         </Grid>
                         <Grid item xs={12} md={6}>
@@ -452,6 +506,7 @@ function CreatePatient() {
                               name="hasEmail"
                               value={member.hasEmail}
                               onChange={(event) => handleFamilyChange(index, event)}
+                              sx={{ marginLeft: "10px" }}
                             >
                               <FormControlLabel
                                 value="yes"

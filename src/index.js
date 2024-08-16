@@ -13,28 +13,56 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
-import { Toaster } from "react-hot-toast";
-// Convo.AI React Context Provider
+import toast, { Toaster, useToasterStore } from "react-hot-toast";
 import { SoftUIControllerProvider } from "context";
 import { Provider } from "react-redux";
 import store from "./redux/index";
-// registerLicense(
-//   "Ngo9BigBOggjHTQxAR8/V1NCaF1cWWhAYVtpR2Nbe05yflRFalhVVAciSV9jS3pTfkVqWXpfeHRUQWRaUg=="
-// );
+import { Close } from "@mui/icons-material";
+
+// Set a limit on the number of visible toasts
+const TOAST_LIMIT = 1;
+
+function ToastLimitEffect() {
+  const { toasts } = useToasterStore();
+
+  useEffect(() => {
+    toasts
+      ?.filter((t) => t.visible)
+      ?.filter((_, i) => i >= TOAST_LIMIT)
+      ?.forEach((t) => toast?.dismiss(t.id));
+  }, [toasts]);
+
+  return null;
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <BrowserRouter>
       <SoftUIControllerProvider>
+        {/* Toast limit logic */}
+        <ToastLimitEffect />
+
+        {/* Toaster Configuration */}
         <Toaster
           containerStyle={{ zIndex: "99999999999999" }}
-          position="top-right"
+          position="top-center"
           reverseOrder={false}
+          toastOptions={{
+            style: {
+              fontSize: "12px", // Set the font size
+              color: "#66B5A3", // Set the text color
+              backgroundColor: "#fff", // Set the background color
+            },
+            // Adding a close icon to all toasts
+          }}
         />
+
+        {/* Main App Component */}
         <App />
       </SoftUIControllerProvider>
     </BrowserRouter>
