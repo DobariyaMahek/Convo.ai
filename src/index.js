@@ -17,7 +17,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
-
+import { Toaster } from "react-hot-toast";
 // Convo.AI React Context Provider
 import { SoftUIControllerProvider } from "context";
 import { Provider } from "react-redux";
@@ -30,6 +30,11 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       <SoftUIControllerProvider>
+        <Toaster
+          containerStyle={{ zIndex: "99999999999999" }}
+          position="top-right"
+          reverseOrder={false}
+        />
         <App />
       </SoftUIControllerProvider>
     </BrowserRouter>

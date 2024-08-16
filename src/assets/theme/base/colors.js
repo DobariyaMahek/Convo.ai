@@ -293,8 +293,8 @@ const colors = {
   },
 
   inputColors: {
-    borderColor: { main: "#d2d6da", focus: "#35d1f5" },
-    boxShadow: "#81e3f9",
+    borderColor: { main: "#d2d6da", focus: "#66b5a3" },
+    boxShadow: "#66b5a3",
     error: "#fd5c70",
     success: "#66d432",
   },

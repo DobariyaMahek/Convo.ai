@@ -89,7 +89,7 @@ function index() {
       image={curved6}
     >
       <Card>
-        <SoftBox p={3} mb={3} textAlign="center">
+        {/* <SoftBox p={3} mb={3} textAlign="center">
           <AppBar position="static">
             <Tabs
               // orientation={tabsOrientation}
@@ -104,11 +104,12 @@ function index() {
               <Tab value="Family" label="Family" />
             </Tabs>
           </AppBar>
+        </SoftBox> */}
+        <SoftBox p={3} mb={1} textAlign="center">
+          <SoftTypography variant="h5" fontWeight="medium">
+            Sign In
+          </SoftTypography>
         </SoftBox>
-        <SoftBox mb={2}>
-          <Socials {...{ role: value }} />
-        </SoftBox>
-        <Separator />
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form">
             <SoftBox mb={2}>
