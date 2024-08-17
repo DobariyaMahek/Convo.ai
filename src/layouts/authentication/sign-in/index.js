@@ -37,10 +37,14 @@ function index() {
   };
   const handleChange = useCallback(
     (e) => {
-      const { name, value, type, checked } = e.target;
+      const { name, value } = e.target;
       setForm((prevForm) => ({
         ...prevForm,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: value,
+      }));
+      setError((prevForm) => ({
+        ...prevForm,
+        [name]: "",
       }));
     },
     [setForm]
@@ -113,6 +117,9 @@ function index() {
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form">
             <SoftBox mb={2}>
+              <label>
+                Name <span>{error?.name && error?.name}</span>
+              </label>
               <SoftInput
                 placeholder="Name"
                 name="name"
@@ -122,6 +129,10 @@ function index() {
               />
             </SoftBox>
             <SoftBox mb={2}>
+              {" "}
+              <label>
+                Email <span>{error?.email && error?.email}</span>
+              </label>
               <SoftInput
                 type="email"
                 placeholder="Email"
@@ -132,6 +143,10 @@ function index() {
               />
             </SoftBox>
             <SoftBox mb={2}>
+              {" "}
+              <label>
+                Password <span>{error?.password && error?.password}</span>
+              </label>
               <SoftInput
                 type="password"
                 placeholder="Password"
@@ -142,29 +157,14 @@ function index() {
               />
             </SoftBox>
 
-            <SoftBox display="flex" alignItems="center">
-              <Checkbox name="agreement" checked={form.agreement} onChange={handleChange} />
+            <SoftBox display="flex" alignItems="center" justifyContent="end">
               <SoftTypography
                 variant="button"
                 fontWeight="regular"
-                onClick={() =>
-                  setForm((prevForm) => ({
-                    ...prevForm,
-                    agreement: !prevForm.agreement,
-                  }))
-                }
-                sx={{ cursor: "pointer", userSelect: "none" }}
+                onClick={() => navigate("/authentication/forgot-password")}
+                sx={{ cursor: "pointer", userSelect: "none", textAlign: "end" }}
               >
-                &nbsp;&nbsp;I agree to the&nbsp;
-              </SoftTypography>
-              <SoftTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                textGradient
-              >
-                Terms and Conditions
+                <strong>Forgot Your Password?</strong>
               </SoftTypography>
             </SoftBox>
             <SoftBox mt={4} mb={1}>

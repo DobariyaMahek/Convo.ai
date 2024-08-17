@@ -23,6 +23,7 @@ import ChatBot from "layouts/interaction";
 import CalendarComponent from "layouts/interaction/calender";
 import Package from "layouts/package";
 import CallHistory from "layouts/CallHistory";
+import ForgotPassword from "layouts/authentication/forgotPassword";
 
 const useRoutes = () => {
   const location = useLocation();
@@ -229,13 +230,23 @@ const useRoutes = () => {
       noCollapse: true,
       isProtected: false,
     },
+    // {
+    //   type: "collapse",
+    //   name: "Sign Up",
+    //   key: "sign-up",
+    //   route: "/authentication/sign-up",
+    //   icon: <SpaceShip size="12px" />,
+    //   component: <SignUp />,
+    //   noCollapse: true,
+    //   isProtected: false,
+    // },
     {
       type: "collapse",
-      name: "Sign Up",
-      key: "sign-up",
-      route: "/authentication/sign-up",
+      name: "Forgot Password",
+      key: "forgot-password",
+      route: "/authentication/forgot-password",
       icon: <SpaceShip size="12px" />,
-      component: <SignUp />,
+      component: <ForgotPassword />,
       noCollapse: true,
       isProtected: false,
     },

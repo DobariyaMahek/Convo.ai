@@ -54,8 +54,8 @@ root.render(
           reverseOrder={false}
           toastOptions={{
             style: {
-              fontSize: "12px", // Set the font size
-              color: "#66B5A3", // Set the text color
+              fontSize: "13px", // Set the font size
+              color: "#232743", // Set the text color
               backgroundColor: "#fff", // Set the background color
             },
             // Adding a close icon to all toasts

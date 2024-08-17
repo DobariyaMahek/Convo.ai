@@ -60,11 +60,13 @@ function CreatePatient() {
   const validateGeneralInfo = () => {
     let newErrors = {};
     Object.keys(generalInfo).forEach((key) => {
-      if (!generalInfo[key] && key !== "PhoneNumber" && key !== "Email") {
+      if (!generalInfo[key] && key !== "phoneNumber" && key !== "email") {
         newErrors[key] = `${key} is required`;
       }
-      if (!generalInfo.email) {
+      if (!generalInfo.email && generalInfo.hasEmail == "yes") {
         newErrors.email = `Email is required`;
+      } else if (generalInfo.hasEmail === "no" && !generalInfo.phoneNumber) {
+        newErrors.phoneNumber = "PhoneNumber is required";
       }
       if (
         generalInfo.email &&
@@ -73,9 +75,7 @@ function CreatePatient() {
       ) {
         newErrors.email = `Email is not valid`;
       }
-      if (!generalInfo.phoneNumber && generalInfo.hasEmail == "no") {
-        newErrors.phoneNumber = "PhoneNumber is required";
-      }
+      console.log(newErrors, generalInfo);
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -159,7 +159,7 @@ function CreatePatient() {
     validateGeneralInfo();
     validateFamilyInfo();
     validateMedicalHistory();
-    console.log(validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory());
+    console.log(validateGeneralInfo(), validateFamilyInfo(), validateMedicalHistory());
     if (validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory()) {
       if (!familyInfo?.length) {
         toast("Minimum one family member is required!");
