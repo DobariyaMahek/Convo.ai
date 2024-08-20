@@ -133,7 +133,7 @@ export default function App() {
           </IconButton>{" "}
           <SoftTypography sx={{ textAlign: "center" }}>
             <img src={DoctorImg} alt="img" height="300px" />
-            <h1>Welcome Back to Convo.AI!</h1>
+            <h1>Welcome to Convo.AI!</h1>
             <p>
               We’re thrilled to have you here again. Let’s continue creating meaningful
               conversations and driving innovation together.

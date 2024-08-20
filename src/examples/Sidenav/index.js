@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
@@ -18,6 +18,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentSidenav } = controller;
   const location = useLocation();
+  const navigate = useNavigate();
   const { pathname } = location;
   const collapseName = pathname.split("/").slice(1)[0];
 
@@ -136,7 +137,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <List>{renderRoutes}</List>
       <SoftBox pt={2} my={2} mx={2} mt="auto">
         <SoftBox mt={2}>
-          <SoftButton variant="gradient" color={color} fullWidth onClick={() => signOutUser()}>
+          <SoftButton
+            variant="gradient"
+            color={color}
+            fullWidth
+            onClick={() => {
+              signOutUser();
+              navigate("/authentication/sign-in");
+            }}
+          >
             Logout
           </SoftButton>
         </SoftBox>

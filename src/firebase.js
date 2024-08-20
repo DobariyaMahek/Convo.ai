@@ -33,7 +33,6 @@ const signOutUser = () => {
   signOut(auth)
     .then(() => {
       localStorage.clear();
-      window.location.href = "/authentication/sign-in";
     })
     .catch((error) => {
       console.error("Error during sign out:", error);

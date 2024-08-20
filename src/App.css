@@ -79,3 +79,36 @@
 div[style*="position: fixed"][style*="z-index: 999999999"] {
   display: none !important;
 }
+.hidden-input {
+  display: none;
+}
+.textAreaInput {
+  border: 0.0625rem solid #d2d6da;
+  border-radius: 0.5rem;
+  width: 100%;
+  outline: none;
+}
+.errorTextArea {
+  border: 0.0625rem solid red;
+  border-radius: 0.5rem;
+  width: 100%;
+  outline: none;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-dot {
+  animation: pulse 1s infinite;
+}

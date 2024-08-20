@@ -24,6 +24,16 @@ import CalendarComponent from "layouts/interaction/calender";
 import Package from "layouts/package";
 import CallHistory from "layouts/CallHistory";
 import ForgotPassword from "layouts/authentication/forgotPassword";
+import Interaction from "layouts/interaction";
+import {
+  ChaletSharp,
+  HomeSharp,
+  Layers,
+  ManageAccounts,
+  Person4,
+  Textsms,
+  ThreeP,
+} from "@mui/icons-material";
 
 const useRoutes = () => {
   const location = useLocation();
@@ -37,7 +47,7 @@ const useRoutes = () => {
       name: "Dashboard",
       key: "dashboard",
       route: "/dashboard",
-      icon: <Shop size="12px" />,
+      icon: <HomeSharp size="12px" />,
       component: <Dashboard />,
       noCollapse: true,
       isProtected: true,
@@ -50,7 +60,7 @@ const useRoutes = () => {
       key: "patients",
       noCollapse: true,
       isProtected: true,
-      icon: <Patients size="12px" />,
+      icon: <ManageAccounts size="12px" />,
       isActive: collapseName === "/patients" || collapseName === "/create-patients",
       collapse: [
         {
@@ -92,14 +102,14 @@ const useRoutes = () => {
       key: "chatbot",
       noCollapse: true,
       isProtected: true,
-      icon: <Patients size="12px" />,
+      icon: <Textsms size="12px" />,
       isActive: collapseName === "/chatbot" || collapseName === "/call-calender",
       collapse: [
         {
           name: "Chatbot",
           key: "chatbot",
           route: "/chatbot",
-          component: <ChatBot />,
+          component: <Interaction />,
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/chatbot",
@@ -124,7 +134,7 @@ const useRoutes = () => {
       name: "Package",
       key: "package",
       route: "/package",
-      icon: <Receptions size="12px" />,
+      icon: <Layers size="12px" />,
       component: <Package />,
       noCollapse: true,
       isProtected: true,
@@ -169,7 +179,7 @@ const useRoutes = () => {
       name: "Profile",
       key: "profile",
       route: "/profile",
-      icon: <CustomerSupport size="12px" />,
+      icon: <Person4 size="12px" />,
       component: <Profile />,
       noCollapse: true,
       isProtected: true,
@@ -181,7 +191,7 @@ const useRoutes = () => {
       name: "Bot Interaction",
       key: "chatbot",
       route: "/chatbot",
-      component: <ChatBot />,
+      component: <Interaction />,
       noCollapse: true,
       isProtected: true,
       icon: <Patients size="12px" />,

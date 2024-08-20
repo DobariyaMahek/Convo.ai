@@ -41,8 +41,10 @@ import breakpoints from "assets/theme/base/breakpoints";
 // Images
 import burceMars from "assets/images/bruce-mars.jpg";
 import curved0 from "assets/images/curved-images/curved0.jpg";
-
-function Header() {
+import { Edit } from "@mui/icons-material";
+import { Icon, Tooltip } from "@mui/material";
+import PropTypes from "prop-types";
+function Header({ setEdit, edit }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
 
@@ -120,24 +122,27 @@ function Header() {
               </SoftTypography>
             </SoftBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
-            <AppBar position="static">
-              <Tabs
-                orientation={tabsOrientation}
-                value={tabValue}
-                onChange={handleSetTabValue}
-                sx={{ background: "transparent" }}
-              >
-                <Tab label="App" icon={<Cube />} />
-                <Tab label="Message" icon={<Document />} />
-                <Tab label="Settings" icon={<Settings />} />
-              </Tabs>
-            </AppBar>
-          </Grid>
+          {!edit && (
+            <Grid md={6} textAlign={"end"} sx={{ ml: "auto" }}>
+              <Tooltip title="Edit Profile" placement="top">
+                <Icon
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setEdit(true);
+                  }}
+                >
+                  <Edit color="#fff" />
+                </Icon>
+              </Tooltip>
+            </Grid>
+          )}
         </Grid>
       </Card>
     </SoftBox>
   );
 }
-
+Header.propTypes = {
+  setEdit: PropTypes.func, // Ensure `setEdit` is a function
+  edit: PropTypes.bool, // Ensure `edit` is a boolean
+};
 export default Header;
