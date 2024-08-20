@@ -43,6 +43,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Close from "@mui/icons-material/Close";
+import SoftInput from "components/SoftInput";
 // Author component
 function Author({ image, name, email }) {
   return (
@@ -92,6 +93,58 @@ function Patient() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const navigate = useNavigate();
   const data = [
+    {
+      author: {
+        image: "team2",
+        name: "John Michael",
+        email: "john@creative-tim.com",
+      },
+      function: {
+        job: "Manager",
+        org: "Organization",
+      },
+      status: "online",
+      employed: "23/04/18",
+    },
+    {
+      author: {
+        image: "team2",
+        name: "John Michael",
+        email: "john@creative-tim.com",
+      },
+      function: {
+        job: "Manager",
+        org: "Organization",
+      },
+      status: "online",
+      employed: "23/04/18",
+    },
+    {
+      author: {
+        image: "team2",
+        name: "John Michael",
+        email: "john@creative-tim.com",
+      },
+      function: {
+        job: "Manager",
+        org: "Organization",
+      },
+      status: "online",
+      employed: "23/04/18",
+    },
+    {
+      author: {
+        image: "team2",
+        name: "John Michael",
+        email: "john@creative-tim.com",
+      },
+      function: {
+        job: "Manager",
+        org: "Organization",
+      },
+      status: "online",
+      employed: "23/04/18",
+    },
     {
       author: {
         image: "team2",
@@ -244,6 +297,10 @@ function Patient() {
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <SoftTypography variant="h6">Patient List</SoftTypography>
+              <SoftInput
+                placeholder="Type here..."
+                icon={{ component: "search", direction: "left" }}
+              />
             </SoftBox>
             <SoftBox
               sx={{
@@ -308,7 +365,7 @@ function Patient() {
           <Typography id="confirm-modal-description" variant="body2" color="text.secondary" mb={3}>
             Do you really want to delete these records? This process cannot be undone.
           </Typography>
-          <SoftButton variant="gradient" color="secondary" onClick={handleClose} sx={{ mr: 1 }}>
+          <SoftButton variant="outlined" color="secondary" onClick={handleClose} sx={{ mr: 1 }}>
             Cancel
           </SoftButton>
           <SoftButton variant="gradient" color="error" onClick={handleConfirmDelete}>

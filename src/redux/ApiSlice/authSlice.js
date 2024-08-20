@@ -3,14 +3,12 @@ import { axiosInstance } from "api/base";
 import { setSession } from "helper/authHelper";
 const initialState = {
   user: {},
-  isLoggedIn: false,
-  errorSignIn: false,
+  authLoader: false,
+
   status: "idle",
   error: null,
-  loginguser: {},
-  tokendata: "",
-  loginUser: false,
-  isOpenNavbar: false,
+  loginUser: {},
+  tokenData: "",
 };
 
 export const logIn = createAsyncThunk("user/login", async (body) => {
@@ -44,13 +42,13 @@ export const authSlice = createSlice({
         const token = action?.payload.payload?.token;
         let userInfo = action?.payload.payload.admin;
         if (token) {
-          state.isLoggedIn = true;
-          state.loginguser = userInfo;
+          state.authLoader = true;
+          state.loginUser = userInfo;
           state.status = "succeeded";
           setSessionData(token, userInfo);
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           localStorage.setItem("UserToken", token);
-          state.tokendata = token;
+          state.tokenData = token;
         }
       })
       .addCase(logIn.rejected, (state, action) => {
@@ -60,6 +58,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setLogin, resetAuth, setUpdatedUser, setAutoLogin, setToken, setIsOpenNavbar } =
-  authSlice.actions;
+// export const { setLogin, resetAuth, setUpdatedUser, setAutoLogin, } =
+//   authSlice.actions;
 export default authSlice.reducer;

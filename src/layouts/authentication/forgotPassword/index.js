@@ -100,10 +100,21 @@ function ForgotPassword() {
                 variant="button"
                 fontWeight="regular"
                 onClick={() => navigate("/authentication/sign-in")}
-                sx={{ cursor: "pointer", userSelect: "none", textAlign: "center" }}
+                sx={{
+                  cursor: "pointer",
+                  userSelect: "none",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
               >
-                <strong style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <ArrowBack /> {"     "}Back to Sign In
+                <strong
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ArrowBack /> &nbsp; Back to Sign In
                 </strong>
               </SoftTypography>
             </SoftBox>

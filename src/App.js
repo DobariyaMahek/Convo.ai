@@ -23,7 +23,9 @@ import useRoutes from "routes";
 import SoftTypography from "components/SoftTypography";
 import { Image } from "@mui/icons-material";
 import Loader from "components/Loader";
+import { useSelector } from "react-redux";
 export default function App() {
+  const { authLoader } = useSelector((state) => state.auth);
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
@@ -118,7 +120,7 @@ export default function App() {
   );
   return (
     <ThemeProvider theme={theme}>
-      {false && <Loader />}
+      {authLoader && <Loader />}
       <CssBaseline />
       {showWelcomeMessage && (
         <div className={`full-screen-welcome`}>

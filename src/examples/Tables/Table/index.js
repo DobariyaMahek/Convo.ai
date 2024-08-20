@@ -89,10 +89,10 @@ function Table({ columns, rows }) {
           <SoftBox
             key={uuidv4()}
             component="td"
-            p={1}
+            p={0.6}
             borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
           >
-            <SoftBox display="flex" alignItems="center" py={0.5} px={1}>
+            <SoftBox display="flex" alignItems="center" px={1}>
               <SoftBox mr={2}>
                 <SoftAvatar src={row[name][0]} name={row[name][1]} variant="rounded" size="sm" />
               </SoftBox>
@@ -107,7 +107,7 @@ function Table({ columns, rows }) {
           <SoftBox
             key={uuidv4()}
             component="td"
-            p={1}
+            p={0.6}
             textAlign={align}
             borderBottom={row.hasBorder ? `${borderWidth[1]} solid ${light.main}` : null}
           >
