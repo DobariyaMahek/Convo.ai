@@ -25,6 +25,7 @@ import {
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import SoftBox from "components/SoftBox";
+import { getSocket } from "api/socket";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [newMessage, setNewMessage] = useState(true);
@@ -34,7 +35,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const [animateDot, setAnimateDot] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-
+  const socket = getSocket();
+  useEffect(() => {
+    // if (socket) {
+    //   if (socket.connected) {
+    //     socket.emit("get-unreadNotification-counts", {});
+    //     socket.emit("check-notification", {});
+    //   } else {
+    //     console.log("Socket is not connected");
+    //   }
+    //   socket.on("get-unreadNotification-counts", (data) => {
+    //     setNotificationNumber(data.counts);
+    //   });
+    //   socket.on("check-notification", (data) => {
+    //     setUnreadNotification(data?.unreadNotification || []);
+    //   });
+    //   socket.on("error", (error) => {
+    //     console.error("Socket connection error:", error);
+    //   });
+    // }
+  }, [socket]);
   useEffect(() => {
     if (fixedNavbar) {
       setNavbarType("sticky");
@@ -64,6 +84,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     setOpenMenu(event.currentTarget);
     setAnimateDot(false); // Stop the animation
     setNewMessage(false);
+    // socket.emit("update-notification", { isRead: true });
   };
   const handleCloseMenu = () => {
     setOpenMenu(false);

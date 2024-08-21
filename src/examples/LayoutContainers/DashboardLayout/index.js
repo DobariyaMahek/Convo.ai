@@ -26,6 +26,7 @@ import SoftBox from "components/SoftBox";
 
 // Convo.AI React context
 import { useSoftUIController, setLayout } from "context";
+import Calling from "components/Calling";
 
 function DashboardLayout({ children }) {
   const [controller, dispatch] = useSoftUIController();

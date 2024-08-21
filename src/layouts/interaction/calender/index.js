@@ -96,7 +96,7 @@ function CalendarComponent() {
                 endAccessor="end"
                 selectable
                 onSelectSlot={handleSelectSlot}
-                style={{ height: 800 }}
+                style={{ height: 952 }}
                 eventPropGetter={eventPropGetter} // Apply custom styles to events
                 components={{
                   event: eventRenderer, // Custom event renderer

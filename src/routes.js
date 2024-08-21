@@ -34,6 +34,7 @@ import {
   Textsms,
   ThreeP,
 } from "@mui/icons-material";
+import Call from "layouts/Call";
 
 const useRoutes = () => {
   const location = useLocation();
@@ -197,6 +198,18 @@ const useRoutes = () => {
       icon: <Patients size="12px" />,
       isActive: collapseName === "/chatbot",
       isShow: userInfo?.role == "Patient",
+    },
+    {
+      type: "collapse",
+      name: "Call",
+      key: "call",
+      route: "/call",
+      component: <Call />,
+      noCollapse: true,
+      isProtected: true,
+      icon: <Patients size="12px" />,
+      isActive: false,
+      isShow: false,
     },
     {
       type: "collapse",
