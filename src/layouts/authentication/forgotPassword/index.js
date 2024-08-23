@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import React, { useState, useCallback } from "react";
 import Card from "@mui/material/Card";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -9,13 +9,21 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 import toast from "react-hot-toast";
 import { ArrowBack } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { SendOTP, VerifyForgotPasswordOTP } from "../../../redux/ApiSlice/authSlice";
+import { useDispatch } from "react-redux";
+import OTPModal from "./OTPModal"; // Import OTPModal
+import ResetPasswordModal from "./ResetPasswordModal"; // Import ResetPasswordModal
 
 function ForgotPassword() {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
+
   const handleEmailChange = (e) => setEmail(e.target.value);
+
   const validateForm = useCallback(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -26,35 +34,46 @@ function ForgotPassword() {
       : "";
 
     setError(errors);
-    if (errors) {
-      return false;
-    } else {
-      return true;
-    }
+    return !errors;
   }, [email]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // const response = await fetch("/api/forgot-password", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({ email }),
-        // });
+        await dispatch(SendOTP({ email })).then((res) => {
+          if (res?.payload?.status == "success") {
+            toast("OTP has been sent to your email.");
 
-        // const data = await response.json();
-
-        // if (response.ok) {
-        toast("A password reset link has been sent to your email.");
-        // } else {
-        //   setMessage(data.error || "An error occurred. Please try again.");
-        // }
+            setOtpModalOpen(true); // Open OTP Modal after sending OTP
+          } else if (res?.payload?.detail == "An OTP was already sent. Please check your email.") {
+            toast(res?.payload?.detail);
+            setOtpModalOpen(true); // Open OTP Modal after sending OTP
+          }
+        });
       } catch (error) {
         toast("An error occurred. Please try again.");
       }
     }
+  };
+
+  const handleVerifyOTP = (otp) => {
+    dispatch(VerifyForgotPasswordOTP({ email, otp_code: otp })).then((res) => {
+      if (res?.payload?.status == "success") {
+        toast("OTP verified successfully");
+
+        setOtpModalOpen(false); // Close OTP Modal
+        setResetPasswordModalOpen(true); // Open Reset Password Modal
+      } else {
+        toast(res?.payload?.detail);
+      }
+    });
+  };
+
+  const handleResetPassword = (newPassword) => {
+    setResetPasswordModalOpen(false); // Close Reset Password Modal
+    toast("Password has been reset successfully.");
+    navigate("/authentication/sign-in");
   };
 
   return (
@@ -81,18 +100,13 @@ function ForgotPassword() {
                 name="email"
                 value={email}
                 onChange={handleEmailChange}
-                error={error}
-              />{" "}
+                error={!!error}
+              />
             </SoftBox>
-            <SoftBox mt={4} mb={1}>
-              <SoftButton
-                variant="gradient"
-                color="dark"
-                fullWidth
-                disabled={loading}
-                onClick={handleSubmit}
-              >
-                {loading ? "Sending..." : "Send Reset Link"}
+
+            <SoftBox mb={1} mt={4}>
+              <SoftButton variant="gradient" color="dark" fullWidth onClick={handleSubmit}>
+                {"Send OTP"}
               </SoftButton>
             </SoftBox>
             <SoftBox display="flex" alignItems="center" justifyContent="center">
@@ -121,6 +135,24 @@ function ForgotPassword() {
           </SoftBox>
         </SoftBox>
       </Card>
+
+      {/* OTP Modal */}
+      <OTPModal
+        open={otpModalOpen}
+        onClose={() => setOtpModalOpen(false)}
+        onVerify={handleVerifyOTP}
+        onSubmit={handleSubmit}
+      />
+
+      {/* Reset Password Modal */}
+      <ResetPasswordModal
+        open={resetPasswordModalOpen}
+        onClose={() => {
+          setResetPasswordModalOpen(false);
+        }}
+        email={email}
+        onResetPassword={handleResetPassword}
+      />
     </BasicLayout>
   );
 }

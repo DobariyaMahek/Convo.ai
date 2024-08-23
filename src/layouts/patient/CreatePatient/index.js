@@ -32,6 +32,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import SoftTypography from "components/SoftTypography";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { createPatient } from "../../../redux/ApiSlice/patientSlice";
 function CreatePatient() {
   const [controller] = useSoftUIController();
   const { sidenavColor } = controller;
@@ -42,21 +44,18 @@ function CreatePatient() {
     birthdate: "",
     phoneNumber: "",
     email: "",
-    profileImage: null,
     hasEmail: "yes",
   });
   const [familyInfo, setFamilyInfo] = useState([
     { relation: "", name: "", email: "", hasEmail: "yes" },
   ]);
   const [medicalHistory, setMedicalHistory] = useState({
-    allergies: "",
-    chronicConditions: "",
-    medications: "",
+    description: "",
   });
   const [errors, setErrors] = useState({});
   const [familyErrors, setFamilyErrors] = useState([{}]);
   const [medicalErrors, setMedicalErrors] = useState({});
-
+  const dispatch = useDispatch();
   const validateGeneralInfo = () => {
     let newErrors = {};
     Object.keys(generalInfo).forEach((key) => {
@@ -75,7 +74,6 @@ function CreatePatient() {
       ) {
         newErrors.email = `Email is not valid`;
       }
-      console.log(newErrors, generalInfo);
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -114,10 +112,8 @@ function CreatePatient() {
     setFamilyErrors(newFamilyErrors);
     return valid;
   };
-
   const validateMedicalHistory = () => {
     let newErrors = {};
-    console.log(medicalHistory);
     Object.keys(medicalHistory).forEach((key) => {
       if (!medicalHistory[key]) {
         newErrors[key] = `${key} is required`;
@@ -126,7 +122,6 @@ function CreatePatient() {
     setMedicalErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setGeneralInfo((prev) => ({ ...prev, [name]: value }));
@@ -146,8 +141,7 @@ function CreatePatient() {
 
   const handleMedicalHistoryChange = (event) => {
     const { name, value } = event.target;
-    setMedicalHistory((prev) => ({ ...prev, [name]: value }));
-    setMedicalErrors((prev) => ({ ...prev, [name]: "" }));
+    setMedicalHistory((prev) => ({ ...prev, [name]: value?.trimStart() }));
   };
 
   const addFamilyMember = () => {
@@ -159,28 +153,39 @@ function CreatePatient() {
     validateGeneralInfo();
     validateFamilyInfo();
     validateMedicalHistory();
-    console.log(validateGeneralInfo(), validateFamilyInfo(), validateMedicalHistory());
     if (validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory()) {
       if (!familyInfo?.length) {
         toast("Minimum one family member is required!");
         return;
       }
-
-      console.log("Form Submitted", { generalInfo, familyInfo, medicalHistory });
-      // Handle form submission logic
-    }
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setGeneralInfo((prev) => ({ ...prev, profileImage: reader.result }));
+      let body = {
+        last_name: generalInfo?.lastName,
+        first_name: generalInfo?.firstName,
+        birthdate: new Date(generalInfo?.birthdate),
+        email: generalInfo?.email,
+        medical_history: medicalHistory?.description,
+        family_members: familyInfo.map(({ hasEmail, ...rest }) => rest),
       };
-      reader.readAsDataURL(file);
+      dispatch(createPatient(body)).then((res) => {
+        if (res?.payload?.status == "success") {
+          navigate("/patients");
+          setMedicalHistory({
+            description: "",
+          });
+          setFamilyInfo([{ relation: "", name: "", email: "", hasEmail: "yes" }]);
+          setGeneralInfo({
+            lastName: "",
+            firstName: "",
+            birthdate: "",
+            phoneNumber: "",
+            email: "",
+            hasEmail: "yes",
+          });
+        } else {
+          toast("Oops! Something Went wrong");
+        }
+      });
     }
-    setErrors((prev) => ({ ...prev, profileImage: "" }));
   };
 
   return (
@@ -211,31 +216,6 @@ function CreatePatient() {
                   General Information
                 </SoftTypography>{" "}
                 <Grid container spacing={2}>
-                  {/* Profile Image Upload */}
-                  <Grid item xs={12} md={6}>
-                    <label>
-                      Photo <span>* {errors.profileImage && errors.profileImage}</span>
-                    </label>
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                      <Avatar
-                        alt="Profile Image"
-                        src={generalInfo.profileImage}
-                        sx={{ width: 100, height: 100, mb: 2 }}
-                      />
-                      <label htmlFor="upload-button">
-                        <input
-                          accept="image/*"
-                          style={{ display: "none" }}
-                          id="upload-button"
-                          type="file"
-                          onChange={handleImageUpload}
-                        />
-                        <IconButton color="primary" aria-label="upload picture" component="span">
-                          <PhotoCamera />
-                        </IconButton>
-                      </label>
-                    </Box>
-                  </Grid>
                   <Grid item xs={12} md={6}>
                     {/* General Info Fields */}
                     <label>
@@ -250,6 +230,8 @@ function CreatePatient() {
                       onChange={handleInputChange}
                       error={Boolean(errors.firstName)}
                     />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
                     <label>
                       Last Name <span>* {errors.lastName && errors.lastName}</span>
                     </label>
@@ -262,7 +244,8 @@ function CreatePatient() {
                       onChange={handleInputChange}
                       error={Boolean(errors.lastName)}
                     />
-
+                  </Grid>
+                  <Grid item xs={12} md={6}>
                     <label>
                       Date of Birth <span>* {errors.birthdate && errors.birthdate}</span>
                     </label>
@@ -275,31 +258,6 @@ function CreatePatient() {
                       onChange={handleInputChange}
                       error={Boolean(errors.birthdate)}
                     />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <FormControl component="fieldset">
-                      <label>Do they have an email?</label>
-                      <RadioGroup
-                        aria-label="hasEmail"
-                        name="hasEmail"
-                        value={generalInfo.hasEmail}
-                        onChange={handleInputChange}
-                        sx={{ marginLeft: "10px" }}
-                      >
-                        <FormControlLabel
-                          value="yes"
-                          control={<Radio />}
-                          label="Yes"
-                          color="#66b5a3"
-                        />
-                        <FormControlLabel
-                          value="no"
-                          control={<Radio />}
-                          label="No"
-                          color="#66b5a3"
-                        />
-                      </RadioGroup>
-                    </FormControl>
                   </Grid>
                   {generalInfo.hasEmail === "yes" ? (
                     <Grid item xs={12} md={6}>
@@ -331,7 +289,32 @@ function CreatePatient() {
                         error={Boolean(errors.phoneNumber)}
                       />
                     </Grid>
-                  )}
+                  )}{" "}
+                  <Grid item xs={12} md={6}>
+                    <FormControl component="fieldset">
+                      <label>Do they have an email?</label>
+                      <RadioGroup
+                        aria-label="hasEmail"
+                        name="hasEmail"
+                        value={generalInfo.hasEmail}
+                        onChange={handleInputChange}
+                        sx={{ marginLeft: "10px" }}
+                      >
+                        <FormControlLabel
+                          value="yes"
+                          control={<Radio />}
+                          label="Yes"
+                          color="#66b5a3"
+                        />
+                        <FormControlLabel
+                          value="no"
+                          control={<Radio />}
+                          label="No"
+                          color="#66b5a3"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
                 </Grid>
               </SoftBox>
             </Card>
@@ -342,50 +325,17 @@ function CreatePatient() {
                   Medical History
                 </SoftTypography>{" "}
                 <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12}>
                     <label>
-                      Allergies <span>* {medicalErrors.allergies && medicalErrors.allergies}</span>
+                      description{" "}
+                      <span>* {medicalErrors?.description && medicalErrors?.description}</span>
                     </label>
-                    <SoftInput
-                      fullWidth
-                      label="Allergies"
-                      name="allergies"
-                      type="text"
-                      value={medicalHistory.allergies}
+                    <textarea
+                      rows={7}
+                      name="description"
+                      className={medicalErrors?.description ? "errorTextArea" : "textAreaInput"}
+                      value={medicalHistory.description}
                       onChange={handleMedicalHistoryChange}
-                      error={Boolean(medicalErrors.allergies)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <label>
-                      Chronic Conditions{" "}
-                      <span>
-                        * {medicalErrors.chronicConditions && medicalErrors.chronicConditions}
-                      </span>
-                    </label>
-                    <SoftInput
-                      fullWidth
-                      label="Chronic conditions"
-                      name="chronicConditions"
-                      type="text"
-                      value={medicalHistory.chronicConditions}
-                      onChange={handleMedicalHistoryChange}
-                      error={Boolean(medicalErrors.chronicConditions)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <label>
-                      Medications{" "}
-                      <span>* {medicalErrors.medications && medicalErrors.medications}</span>
-                    </label>
-                    <SoftInput
-                      fullWidth
-                      label="Medications"
-                      name="medications"
-                      type="text"
-                      value={medicalHistory.medications}
-                      onChange={handleMedicalHistoryChange}
-                      error={Boolean(medicalErrors.medications)}
                     />
                   </Grid>
                 </Grid>
@@ -460,11 +410,10 @@ function CreatePatient() {
                             <option value="">Select Relation</option>
                             <option value="Father">Father</option>
                             <option value="Mother">Mother</option>
-                            <option value="Brother">Brother</option>
-                            <option value="Sister">Sister</option>
+                            <option value="Siblings">Siblings</option>
                             <option value="Son">Son</option>
                             <option value="Daughter">Daughter</option>
-                            <option value="Wife">Wife</option>
+                            <option value="Spouse ">Spouse </option>
                             <option value="Other">Other</option>
                           </select>
                           {member.relation === "Other" && (

@@ -20,6 +20,9 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 import { useNavigate } from "react-router-dom";
 import { AppBar, Box, Tab, Tabs } from "@mui/material";
 import "./sign-in.css";
+import { useDispatch } from "react-redux";
+import { logIn } from "../../../redux/ApiSlice/authSlice";
+import toast from "react-hot-toast";
 function index() {
   document.title = "Convo.AI | SignIn";
   const [form, setForm] = useState({
@@ -31,7 +34,7 @@ function index() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [value, setValue] = useState("Carehome");
-
+  const dispatch = useDispatch();
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
@@ -80,9 +83,19 @@ function index() {
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       const { name, email, password } = form;
-      localStorage.setItem("authUser", JSON.stringify({ name, email, password, role: value }));
-
-      navigate("/dashboard");
+      dispatch(logIn({ name, email, password })).then((res) => {
+        if (res?.payload?.status == "success") {
+toast("You have successfully logged in.");
+          localStorage.setItem("authUser", JSON.stringify({ ...res?.payload }));
+          navigate("/dashboard");
+        } else {
+          if (res?.payload?.detail == "Incorrect username, email, or password") {
+            toast("Invalid credentials");
+          }else {
+            toast("Oops! Something Went wrong");
+          }
+        }
+      });
     }
   }, [form, validateForm]);
 

@@ -35,13 +35,13 @@ import {
   ThreeP,
 } from "@mui/icons-material";
 import Call from "layouts/Call";
+import { getSession } from "helper/authHelper";
 
 const useRoutes = () => {
   const location = useLocation();
   const { pathname } = location;
-  const userInfo = JSON.parse(localStorage.getItem("authUser"));
+  const userInfo = getSession();
   const collapseName = pathname;
-
   return [
     {
       type: "collapse",
@@ -72,7 +72,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/patients",
-          isShow: userInfo?.role == "Carehome",
+          isShow: userInfo?.role == "care_home",
         },
         {
           name: "Create Patient",
@@ -82,7 +82,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/create-patients",
-          isShow: userInfo?.role == "Carehome",
+          isShow: userInfo?.role == "care_home",
         },
         {
           name: "Update Patient",
@@ -95,7 +95,7 @@ const useRoutes = () => {
           isShow: false,
         },
       ],
-      isShow: userInfo?.role == "Carehome",
+      isShow: userInfo?.role == "care_home",
     },
     {
       type: "collapse",
@@ -114,7 +114,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/chatbot",
-          isShow: userInfo?.role == "Carehome",
+          isShow: userInfo?.role == "care_home",
         },
         {
           name: "Call Calender",
@@ -124,10 +124,10 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-calender",
-          isShow: userInfo?.role == "Carehome",
+          isShow: userInfo?.role == "care_home",
         },
       ],
-      isShow: userInfo?.role == "Carehome",
+      isShow: userInfo?.role == "care_home",
     },
 
     {
@@ -140,7 +140,7 @@ const useRoutes = () => {
       noCollapse: true,
       isProtected: true,
       isActive: collapseName === "/package",
-      isShow: userInfo?.role == "Carehome" || userInfo?.role == "Family",
+      isShow: userInfo?.role == "care_home" || userInfo?.role == "family_member",
     },
     // {
     //   type: "collapse",
@@ -185,7 +185,7 @@ const useRoutes = () => {
       noCollapse: true,
       isProtected: true,
       isActive: collapseName === "/profile",
-      isShow: userInfo?.role == "Carehome",
+      isShow: userInfo?.role == "care_home",
     },
     {
       type: "collapse",
@@ -197,7 +197,7 @@ const useRoutes = () => {
       isProtected: true,
       icon: <Patients size="12px" />,
       isActive: collapseName === "/chatbot",
-      isShow: userInfo?.role == "Patient",
+      isShow: userInfo?.role == "patient",
     },
     {
       type: "collapse",
@@ -228,7 +228,7 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-history",
-          isShow: userInfo?.role == "Patient" || userInfo?.role == "Family",
+          isShow: userInfo?.role == "patient" || userInfo?.role == "family_member",
         },
         {
           name: "Call Calender",
@@ -238,10 +238,10 @@ const useRoutes = () => {
           noCollapse: true,
           isProtected: true,
           isActive: collapseName === "/call-calender",
-          isShow: userInfo?.role == "Patient",
+          isShow: userInfo?.role == "patient",
         },
       ],
-      isShow: userInfo?.role == "Patient" || userInfo?.role == "Family",
+      isShow: userInfo?.role == "patient" || userInfo?.role == "family_member",
     },
     {
       type: "collapse",

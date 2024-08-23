@@ -11,6 +11,7 @@ export const authHeader = () => {
       "Content-Type": "application/json",
       "X-Frame-Options": "SAMEORIGIN",
       "ngrok-skip-browser-warning": true,
+      "User-Agent": true,
     };
   } else {
     return {
@@ -22,6 +23,7 @@ export const authHeader = () => {
       "X-Frame-Options": "SAMEORIGIN",
       "X-Content-Type-Options": "nosniff",
       "ngrok-skip-browser-warning": true,
+      "User-Agent": true,
     };
   }
 };
@@ -38,6 +40,7 @@ export const chatAuth = () => {
     "X-Content-Type-Options": "nosniff",
     "ngrok-skip-browser-warning": true,
     "x-auth-token": sessionObj.access_token,
+    "User-Agent": true,
   };
 };
 
@@ -54,6 +57,7 @@ export const authHeaderForm = () => {
       "Content-Type": "multipart/form-data",
       "X-Frame-Options": "SAMEORIGIN",
       "ngrok-skip-browser-warning": true,
+      "User-Agent": true,
     };
   } else {
     return {
@@ -65,6 +69,7 @@ export const authHeaderForm = () => {
       "X-Frame-Options": "SAMEORIGIN",
       "X-Content-Type-Options": "nosniff",
       "ngrok-skip-browser-warning": true,
+      "User-Agent": true,
     };
   }
 };

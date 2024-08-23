@@ -4,11 +4,9 @@ import { authHeader } from "helper/authHelper";
 export const API_PREFIX = "";
 
 const axiosApi = axios.create({
-  baseURL: `${process.env.CONVO_AI_API_URL}`,
+  baseURL: "https://195b-2405-201-200d-1932-20f0-e2c7-2c45-91e3.ngrok-free.app/",
 });
-
 export const axiosInstance = axiosApi;
-
 export async function get(url, config = {}) {
   return await axiosApi
     .get(url, { params: config, headers: authHeader() })

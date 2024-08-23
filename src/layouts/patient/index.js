@@ -44,13 +44,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import Close from "@mui/icons-material/Close";
 import SoftInput from "components/SoftInput";
+import { GetActivePatientInfo } from "../../redux/ApiSlice/patientSlice";
+import { useDispatch } from "react-redux";
+import useDebounce from "helper/useDebounce";
 // Author component
-function Author({ image, name, email }) {
+function Author({ name, email }) {
   return (
     <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
-      <SoftBox mr={2}>
-        <SoftAvatar src={fallbackImage} alt={name} size="sm" variant="rounded" />
-      </SoftBox>
       <SoftBox display="flex" flexDirection="column">
         <SoftTypography variant="button" fontWeight="medium">
           {name}
@@ -89,9 +89,13 @@ Function.propTypes = {
 };
 
 function Patient() {
+  document.title = "Convo.AI | Patients";
   const [open, setOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [search, setSearch] = useState("");
+  const debounceSearch = useDebounce(search, 1000);
   const data = [
     {
       author: {
@@ -103,7 +107,7 @@ function Patient() {
         job: "Manager",
         org: "Organization",
       },
-      status: "online",
+      status: "Active",
       employed: "23/04/18",
     },
     {
@@ -116,7 +120,7 @@ function Patient() {
         job: "Manager",
         org: "Organization",
       },
-      status: "online",
+      status: "Active",
       employed: "23/04/18",
     },
     {
@@ -129,7 +133,7 @@ function Patient() {
         job: "Manager",
         org: "Organization",
       },
-      status: "online",
+      status: "Active",
       employed: "23/04/18",
     },
     {
@@ -142,7 +146,7 @@ function Patient() {
         job: "Manager",
         org: "Organization",
       },
-      status: "online",
+      status: "Active",
       employed: "23/04/18",
     },
     {
@@ -155,7 +159,7 @@ function Patient() {
         job: "Manager",
         org: "Organization",
       },
-      status: "online",
+      status: "Active",
       employed: "23/04/18",
     },
     {
@@ -168,7 +172,7 @@ function Patient() {
         job: "Programator",
         org: "Developer",
       },
-      status: "offline",
+      status: "Inactive",
       employed: "11/01/19",
     },
     {
@@ -181,7 +185,7 @@ function Patient() {
         job: "Executive",
         org: "Projects",
       },
-      status: "online",
+      status: "Active",
       employed: "19/09/17",
     },
     {
@@ -194,7 +198,7 @@ function Patient() {
         job: "Programator",
         org: "Developer",
       },
-      status: "online",
+      status: "Active",
       employed: "24/12/08",
     },
     {
@@ -207,7 +211,7 @@ function Patient() {
         job: "Manager",
         org: "Executive",
       },
-      status: "offline",
+      status: "Inactive",
       employed: "04/10/21",
     },
     {
@@ -220,12 +224,12 @@ function Patient() {
         job: "Programtor",
         org: "Developer",
       },
-      status: "offline",
+      status: "Inactive",
       employed: "14/09/20",
     },
   ];
   const currentRows = data.map((item) => ({
-    patient: <Author image={item.author.image} name={item.author.name} email={item.author.email} />,
+    patient: <Author name={item.author.name} email={item.author.email} />,
     createdAt: (
       <SoftTypography variant="caption" color="secondary" fontWeight="medium">
         {item.employed}
@@ -234,8 +238,8 @@ function Patient() {
     status: (
       <SoftBadge
         variant="gradient"
-        badgeContent={item.status === "online" ? "online" : "offline"}
-        color={item.status === "online" ? "success" : "secondary"}
+        badgeContent={item.status === "Active" ? "Active" : "Inactive"}
+        color={item.status === "Active" ? "success" : "secondary"}
         size="xs"
         container
       />
@@ -270,24 +274,21 @@ function Patient() {
 
   const handleConfirmDelete = () => {
     // Add your delete logic here
-    console.log("Deleted:", selectedPatient);
     setOpen(false);
     setSelectedPatient(null);
   };
 
   useEffect(() => {
-    document.title = "Convo.AI | Patients";
-
     const fetchData = async () => {
       try {
-        await axios.get("YOUR_API_ENDPOINT_HERE");
+        await dispatch(GetActivePatientInfo({ search: debounceSearch }));
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [debounceSearch]);
 
   return (
     <DashboardLayout>
@@ -300,6 +301,10 @@ function Patient() {
               <SoftInput
                 placeholder="Type here..."
                 icon={{ component: "search", direction: "left" }}
+                value={search}
+                onChange={(e) => {
+                  setSearch(e?.target?.value?.trimStart());
+                }}
               />
             </SoftBox>
             <SoftBox
@@ -316,11 +321,11 @@ function Patient() {
             </SoftBox>
           </Card>
         </SoftBox>
-        <Grid container spacing={3} marginTop="20px">
+        {/* <Grid container spacing={3} marginTop="20px">
           <Grid xs={12} display="flex" justifyContent="end">
             <Pagination count={10} color="primary" variant="outlined" shape="rounded" />
           </Grid>
-        </Grid>
+        </Grid> */}
       </SoftBox>
 
       {/* Confirmation Dialog */}

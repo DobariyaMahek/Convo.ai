@@ -21,7 +21,7 @@ import toast, { Toaster, useToasterStore } from "react-hot-toast";
 import { SoftUIControllerProvider } from "context";
 import { Provider } from "react-redux";
 import store from "./redux/index";
-import { Close } from "@mui/icons-material";
+import * as serviceWorker from "./serviceWorker";
 
 // Set a limit on the number of visible toasts
 const TOAST_LIMIT = 1;
@@ -68,3 +68,4 @@ root.render(
     </BrowserRouter>
   </Provider>
 );
+serviceWorker.register();

@@ -49,7 +49,6 @@ function PatientInfo({ setCurrentSection }) {
   const handleSubmit = () => {
     if (validateGeneralInfo()) {
       setCurrentSection(2);
-      console.log("Form Submitted", { generalInfo });
       // Handle form submission logic
     }
   };

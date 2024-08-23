@@ -24,31 +24,25 @@ import SoftTypography from "components/SoftTypography";
 import { Image } from "@mui/icons-material";
 import Loader from "components/Loader";
 import { useSelector } from "react-redux";
-import Calling from "components/Calling";
+import Calling from "components/Calling"; // index.js or App.js
+import * as serviceWorker from "./serviceWorker";
+import { getSession } from "helper/authHelper";
+
+// Register the service worker
+
 export default function App() {
   const { authLoader } = useSelector((state) => state.auth);
+  const { patientLoader } = useSelector((state) => state.patient);
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
-  const userInfo = JSON.parse(localStorage.getItem("authUser"));
+  const userInfo = getSession();
   const isShowWelcome = JSON.parse(localStorage.getItem("welcomeShown"));
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
   const routes = useRoutes();
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .then((registration) => {
-            console.log("Service Worker registered with scope:", registration.scope);
-          })
-          .catch((error) => {
-            console.error("Service Worker registration failed:", error);
-          });
-      });
-    }
-  }, []);
+  serviceWorker.register();
+
   useEffect(() => {
     if (userInfo && !isShowWelcome) {
       setShowWelcomeMessage(true);
@@ -112,7 +106,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      {authLoader && <Loader />}
+      {(authLoader || patientLoader) && <Loader />}
       <CssBaseline />
       {showWelcomeMessage && (
         <div className={`full-screen-welcome`}>
@@ -155,8 +149,8 @@ export default function App() {
           path="*"
           element={<Navigate to={`${userInfo ? "/dashboard" : "authentication/sign-in"}`} />}
         />
-      </Routes>
-      <Calling />
+      </Routes>{" "}
+      {/* {userInfo && <Calling />} */}
     </ThemeProvider>
   );
 }
