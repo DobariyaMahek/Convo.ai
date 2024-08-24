@@ -22,7 +22,10 @@ function ForgotPassword() {
   const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setError("");
+  };
 
   const validateForm = useCallback(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,6 +52,8 @@ function ForgotPassword() {
           } else if (res?.payload?.detail == "An OTP was already sent. Please check your email.") {
             toast(res?.payload?.detail);
             setOtpModalOpen(true); // Open OTP Modal after sending OTP
+          } else {
+                toast(res?.payload?.detail);
           }
         });
       } catch (error) {
@@ -101,6 +106,11 @@ function ForgotPassword() {
                 value={email}
                 onChange={handleEmailChange}
                 error={!!error}
+                onKeyDown={(e) => {
+                  if (e?.key == "Enter") {
+                    handleSubmit(e);
+                  }
+                }}
               />
             </SoftBox>
 

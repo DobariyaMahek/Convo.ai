@@ -82,6 +82,8 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          border: "none",
+          outline: "none",
         }}
       >
         <Typography variant="h6" component="h2" mb={2}>
@@ -99,6 +101,11 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           value={formData.newPassword}
           onChange={handleChange}
           error={!!errors?.newPassword}
+          onKeyDown={(e) => {
+            if (e?.key == "Enter") {
+              handleSubmit();
+            }
+          }}
         />
         <label style={{ marginTop: "10px" }}>
           Confirm Password <span>* {errors?.confirmPassword}</span>
@@ -112,6 +119,11 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           value={formData.confirmPassword}
           onChange={handleChange}
           error={!!errors?.confirmPassword}
+          onKeyDown={(e) => {
+            if (e?.key == "Enter") {
+              handleSubmit();
+            }
+          }}
         />
         <SoftButton fullWidth variant="gradient" color="dark" sx={{ mt: 2 }} onClick={handleSubmit}>
           Reset Password

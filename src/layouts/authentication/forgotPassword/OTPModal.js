@@ -67,6 +67,10 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
           focusInput(activeInput + 1);
           break;
         }
+        case "Enter": {
+          e.preventDefault();
+          handleSubmit(e);
+        }
         default: {
           if (pressedKey.match(/^[^a-zA-Z0-9]$/)) {
             e.preventDefault();
@@ -110,7 +114,7 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
       setError("");
       onVerify(otpValue);
       setOtp(new Array(6).fill(""));
-      setError("");
+      focusInput(0);
     }
   };
 
@@ -122,6 +126,7 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
         setOtp(new Array(6).fill(""));
         setError("");
       }}
+      sx={{ border: "none", outline: "none" }}
     >
       <Box
         sx={{
@@ -134,6 +139,8 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          border: "none",
+          outline: "none",
         }}
       >
         <label>
