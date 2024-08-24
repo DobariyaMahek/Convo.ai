@@ -150,7 +150,7 @@ export default function App() {
           element={<Navigate to={`${userInfo ? "/dashboard" : "authentication/sign-in"}`} />}
         />
       </Routes>{" "}
-      {userInfo && <Calling />}
+      {/* {userInfo && <Calling />} */}
     </ThemeProvider>
   );
 }

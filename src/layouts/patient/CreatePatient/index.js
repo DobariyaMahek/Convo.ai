@@ -1,43 +1,31 @@
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import SoftInput from "components/SoftInput";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { useSoftUIController } from "context";
 import { EMAIL_REGEX } from "helper/constant";
-import { Close, Delete } from "@mui/icons-material";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import { Close } from "@mui/icons-material";
 import SoftButton from "components/SoftButton";
 import SoftBox from "components/SoftBox";
-import "./createPatient.css";
-import {
-  CardContent,
-  CardHeader,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Snackbar,
-} from "@mui/material";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SoftTypography from "components/SoftTypography";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { createPatient } from "../../../redux/ApiSlice/patientSlice";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { CountryPhoneNumberDigit } from "helper/phonenumberdigit";
+
 function CreatePatient() {
   const [controller] = useSoftUIController();
   const { sidenavColor } = controller;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [generalInfo, setGeneralInfo] = useState({
     lastName: "",
     firstName: "",
@@ -45,134 +33,161 @@ function CreatePatient() {
     phoneNumber: "",
     email: "",
     hasEmail: "yes",
+    country: "in", // Default to India for demonstration
   });
   const [familyInfo, setFamilyInfo] = useState([
-    { relation: "", name: "", email: "", hasEmail: "yes" },
+    { relation: "", name: "", email: "", phoneNumber: "", hasEmail: "yes", country: "in" },
   ]);
-  const [medicalHistory, setMedicalHistory] = useState({
-    description: "",
-  });
+  const [medicalHistory, setMedicalHistory] = useState({ description: "" });
   const [errors, setErrors] = useState({});
   const [familyErrors, setFamilyErrors] = useState([{}]);
   const [medicalErrors, setMedicalErrors] = useState({});
-  const dispatch = useDispatch();
-  const validateGeneralInfo = () => {
-    let newErrors = {};
-    Object.keys(generalInfo).forEach((key) => {
-      if (!generalInfo[key] && key !== "phoneNumber" && key !== "email") {
-        newErrors[key] = `${key} is required`;
-      }
-      if (!generalInfo.email && generalInfo.hasEmail == "yes") {
-        newErrors.email = `Email is required`;
-      } else if (generalInfo.hasEmail === "no" && !generalInfo.phoneNumber) {
-        newErrors.phoneNumber = "PhoneNumber is required";
-      }
-      if (
-        generalInfo.email &&
-        generalInfo.hasEmail == "yes" &&
-        !EMAIL_REGEX?.test(generalInfo.email)
-      ) {
-        newErrors.email = `Email is not valid`;
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+  const validateField = (fieldName, value, countryCode = "in") => {
+    const digit = CountryPhoneNumberDigit?.find(
+      (item) => item?.code?.toLowerCase() == countryCode?.toLowerCase()
+    );
+
+    let error = "";
+    switch (fieldName) {
+      case "firstName":
+      case "lastName":
+      case "birthdate":
+      case "description":
+      case "name":
+      case "relation":
+        if (!value?.trim()) error = `${fieldName} is required`;
+        break;
+      case "email":
+        if (generalInfo.hasEmail === "yes") {
+          error = !value?.trim()
+            ? "Email is required"
+            : !EMAIL_REGEX.test(value?.trim()?.toLowerCase())
+            ? "Email is not valid"
+            : "";
+        }
+        break;
+      case "phoneNumber":
+        if (generalInfo.hasEmail === "no") {
+          error = !value
+            ? "Phone number is required"
+            : digit?.phoneNumberLength &&
+              value?.length <
+                digit?.phoneNumberLength + digit.countryCode.replace("+", "")?.length
+            ? `Phone number must have at most ${digit?.phoneNumberLength} digits`
+            : "";
+        }
+        break;
+      default:
+        break;
+    }
+    return error;
   };
 
-  const validateFamilyInfo = () => {
-    let valid = true;
-    const newFamilyErrors = familyInfo.map((member, index) => {
-      let memberErrors = {};
-      if (!member.relation) {
-        memberErrors.relation = "Relation is required";
-        valid = false;
-      }
-      if (member.relation === "Other" && !member?.otherRelation) {
-        memberErrors.otherRelation = "Other Relation is required";
-        valid = false;
-      }
-      if (!member.name) {
-        memberErrors.name = "Name is required";
-        valid = false;
-      }
-      if (!member.email && member.hasEmail == "yes") {
-        memberErrors.email = "Email is required";
-        valid = false;
-      } else if (member.email && member.hasEmail == "yes" && !EMAIL_REGEX?.test(member.email)) {
-        memberErrors.email = `Email is not valid`;
-        valid = false;
-      }
-      if (!member.phoneNumber && member.hasEmail == "no") {
-        memberErrors.phoneNumber = "PhoneNumber is required";
-        valid = false;
-      }
-      return memberErrors;
-    });
-
-    setFamilyErrors(newFamilyErrors);
-    return valid;
-  };
-  const validateMedicalHistory = () => {
-    let newErrors = {};
-    Object.keys(medicalHistory).forEach((key) => {
-      if (!medicalHistory[key]) {
-        newErrors[key] = `${key} is required`;
-      }
-    });
-    setMedicalErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setGeneralInfo((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    const error = validateField(name, value?.trim());
+    setGeneralInfo((prev) => ({
+      ...prev,
+      [name]: name == "email" ? value?.trim()?.toLowerCase() : value?.trimStart(),
+    }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
+  const handlePhoneChange = (phone, country) => {
+    const error = validateField("phoneNumber", phone, country.countryCode);
+    setGeneralInfo((prev) => ({
+      ...prev,
+      phoneNumber: phone?.trim(),
+      country: country?.countryCode?.trim(),
+    }));
+    setErrors((prev) => ({ ...prev, phoneNumber: error }));
   };
 
   const handleFamilyChange = (index, event) => {
     const { name, value } = event.target;
     const updatedFamilyInfo = [...familyInfo];
-    updatedFamilyInfo[index][name] = value;
+    updatedFamilyInfo[index][name] =
+      name == "email" ? value?.trim()?.toLowerCase() : value?.trimStart();
+
+    const error = validateField(name, value?.trimStart(), updatedFamilyInfo[index].country);
+    const updatedFamilyErrors = [...familyErrors];
+    updatedFamilyErrors[index][name] = error;
+
     setFamilyInfo(updatedFamilyInfo);
+    setFamilyErrors(updatedFamilyErrors);
+  };
+
+  const handleFamilyPhoneChange = (index, phone, country) => {
+    const error = validateField("phoneNumber", phone?.trim(), country.countryCode?.trim());
+    const updatedFamilyInfo = [...familyInfo];
+    updatedFamilyInfo[index].phoneNumber = phone?.trim();
+    updatedFamilyInfo[index].country = country.countryCode?.trim();
 
     const updatedFamilyErrors = [...familyErrors];
-    updatedFamilyErrors[index][name] = "";
+    updatedFamilyErrors[index].phoneNumber = error;
+
+    setFamilyInfo(updatedFamilyInfo);
     setFamilyErrors(updatedFamilyErrors);
   };
 
   const handleMedicalHistoryChange = (event) => {
     const { name, value } = event.target;
+    const error = validateField(name, value?.trim());
     setMedicalHistory((prev) => ({ ...prev, [name]: value?.trimStart() }));
+    setMedicalErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const addFamilyMember = () => {
-    setFamilyInfo((prev) => [...prev, { relation: "", name: "", email: "", hasEmail: "yes" }]);
+    setFamilyInfo((prev) => [
+      ...prev,
+      { relation: "", name: "", email: "", phoneNumber: "", hasEmail: "yes", country: "in" },
+    ]);
     setFamilyErrors((prev) => [...prev, {}]);
   };
 
   const handleSubmit = () => {
-    validateGeneralInfo();
-    validateFamilyInfo();
-    validateMedicalHistory();
-    if (validateGeneralInfo() && validateFamilyInfo() && validateMedicalHistory()) {
-      if (!familyInfo?.length) {
-        toast("Minimum one family member is required!");
-        return;
-      }
-      let body = {
-        last_name: generalInfo?.lastName,
-        first_name: generalInfo?.firstName,
-        birthdate: new Date(generalInfo?.birthdate),
-        email: generalInfo?.email,
-        medical_history: medicalHistory?.description,
+    const newErrors = {};
+    Object.keys(generalInfo).forEach((key) => {
+      newErrors[key] = validateField(key, generalInfo[key], generalInfo.country);
+    });
+
+    const newFamilyErrors = familyInfo.map((member) => {
+      const memberErrors = {};
+      Object.keys(member).forEach((key) => {
+        if (key !== "country") {
+          memberErrors[key] = validateField(key, member[key], member.country);
+        }
+      });
+      return memberErrors;
+    });
+
+    const newMedicalErrors = {};
+    Object.keys(medicalHistory).forEach((key) => {
+      newMedicalErrors[key] = validateField(key, medicalHistory[key]);
+    });
+
+    setErrors(newErrors);
+    setFamilyErrors(newFamilyErrors);
+    setMedicalErrors(newMedicalErrors);
+
+    if (
+      !Object.values(newErrors).some((error) => error) &&
+      !newFamilyErrors.some((memberErrors) => Object.values(memberErrors).some((error) => error)) &&
+      !Object.values(newMedicalErrors).some((error) => error)
+    ) {
+      const body = {
+        last_name: generalInfo.lastName?.trim(),
+        first_name: generalInfo.firstName?.trim(),
+        birthdate: new Date(generalInfo.birthdate),
+        email: generalInfo.email?.trim(),
+        phone_number: generalInfo.phoneNumber?.trim(),
+        medical_history: medicalHistory.description?.trim(),
         family_members: familyInfo.map(({ hasEmail, ...rest }) => rest),
       };
       dispatch(createPatient(body)).then((res) => {
-        if (res?.payload?.status == "success") {
+        if (res?.payload?.status === "success") {
           navigate("/patients");
-          setMedicalHistory({
-            description: "",
-          });
-          setFamilyInfo([{ relation: "", name: "", email: "", hasEmail: "yes" }]);
           setGeneralInfo({
             lastName: "",
             firstName: "",
@@ -180,9 +195,14 @@ function CreatePatient() {
             phoneNumber: "",
             email: "",
             hasEmail: "yes",
+            country: "in",
           });
+          setMedicalHistory({ description: "" });
+          setFamilyInfo([
+            { relation: "", name: "", email: "", phoneNumber: "", hasEmail: "yes", country: "in" },
+          ]);
         } else {
-          toast("Oops! Something Went wrong");
+          toast("Oops! Something went wrong");
         }
       });
     }
@@ -192,32 +212,15 @@ function CreatePatient() {
     <DashboardLayout>
       <DashboardNavbar />
       <SoftBox py={3}>
-        {" "}
-        <Grid item xs={12} display="flex" justifyContent="end" gap="10px">
-          <SoftButton
-            variant="gradient"
-            color={"secondary"}
-            onClick={() => {
-              navigate("/patients");
-            }}
-          >
-            cancel
-          </SoftButton>
-          <SoftButton variant="gradient" color={sidenavColor} onClick={handleSubmit}>
-            Submit
-          </SoftButton>
-        </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Card sx={{ marginTop: "20px" }}>
               <SoftBox p={3}>
-                {" "}
                 <SoftTypography variant="h6" gutterBottom>
                   General Information
-                </SoftTypography>{" "}
+                </SoftTypography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    {/* General Info Fields */}
                     <label>
                       First Name <span>* {errors.firstName && errors.firstName}</span>
                     </label>
@@ -226,6 +229,7 @@ function CreatePatient() {
                       label="First name"
                       name="firstName"
                       type="text"
+                      placeholder="Please enter first name"
                       value={generalInfo.firstName}
                       onChange={handleInputChange}
                       error={Boolean(errors.firstName)}
@@ -240,6 +244,7 @@ function CreatePatient() {
                       label="Last name"
                       name="lastName"
                       type="text"
+                      placeholder="Please enter last name"
                       value={generalInfo.lastName}
                       onChange={handleInputChange}
                       error={Boolean(errors.lastName)}
@@ -268,7 +273,6 @@ function CreatePatient() {
                         fullWidth
                         label="Email"
                         name="email"
-                        type="email"
                         value={generalInfo.email}
                         onChange={handleInputChange}
                         error={Boolean(errors.email)}
@@ -279,17 +283,17 @@ function CreatePatient() {
                       <label>
                         Phone Number <span>* {errors.phoneNumber && errors.phoneNumber}</span>
                       </label>
-                      <SoftInput
-                        fullWidth
-                        label="Phone Number"
-                        name="phoneNumber"
-                        type="number"
+                      <PhoneInput
+                        country={generalInfo.country}
                         value={generalInfo.phoneNumber}
-                        onChange={handleInputChange}
-                        error={Boolean(errors.phoneNumber)}
+                        onChange={(phone, country) => handlePhoneChange(phone, country)}
+                        inputStyle={{
+                          width: "100%",
+                          border: errors.phoneNumber ? "1px solid red" : "1px solid #ccc",
+                        }}
                       />
                     </Grid>
-                  )}{" "}
+                  )}
                   <Grid item xs={12} md={6}>
                     <FormControl component="fieldset">
                       <label>Do they have an email?</label>
@@ -300,18 +304,8 @@ function CreatePatient() {
                         onChange={handleInputChange}
                         sx={{ marginLeft: "10px" }}
                       >
-                        <FormControlLabel
-                          value="yes"
-                          control={<Radio />}
-                          label="Yes"
-                          color="#66b5a3"
-                        />
-                        <FormControlLabel
-                          value="no"
-                          control={<Radio />}
-                          label="No"
-                          color="#66b5a3"
-                        />
+                        <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                        <FormControlLabel value="no" control={<Radio />} label="No" />
                       </RadioGroup>
                     </FormControl>
                   </Grid>
@@ -320,14 +314,13 @@ function CreatePatient() {
             </Card>
             <Card sx={{ marginTop: "20px" }}>
               <SoftBox p={3}>
-                {" "}
                 <SoftTypography variant="h6" gutterBottom>
                   Medical History
-                </SoftTypography>{" "}
+                </SoftTypography>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <label>
-                      description{" "}
+                      Description{" "}
                       <span>* {medicalErrors?.description && medicalErrors?.description}</span>
                     </label>
                     <textarea
@@ -347,8 +340,8 @@ function CreatePatient() {
                   <Grid item xs={6}>
                     <SoftTypography variant="h6" gutterBottom>
                       Family Information
-                    </SoftTypography>{" "}
-                  </Grid>{" "}
+                    </SoftTypography>
+                  </Grid>
                   <Grid item xs={6} textAlign="end">
                     <SoftButton variant="gradient" color={sidenavColor} onClick={addFamilyMember}>
                       Add Family Member
@@ -360,14 +353,13 @@ function CreatePatient() {
                     <div
                       key={index}
                       style={{
-                        position: "relative", // Enable absolute positioning for child elements
+                        position: "relative",
                         border: "0.0625rem solid #d2d6da",
                         borderRadius: "0.5rem",
                         padding: "10px 20px 20px 20px",
                         marginTop: "10px",
                       }}
                     >
-                      {/* Delete icon */}
                       <IconButton
                         color="primary"
                         onClick={() => {
@@ -413,7 +405,7 @@ function CreatePatient() {
                             <option value="Siblings">Siblings</option>
                             <option value="Son">Son</option>
                             <option value="Daughter">Daughter</option>
-                            <option value="Spouse ">Spouse </option>
+                            <option value="Spouse">Spouse</option>
                             <option value="Other">Other</option>
                           </select>
                           {member.relation === "Other" && (
@@ -457,18 +449,8 @@ function CreatePatient() {
                               onChange={(event) => handleFamilyChange(index, event)}
                               sx={{ marginLeft: "10px" }}
                             >
-                              <FormControlLabel
-                                value="yes"
-                                control={<Radio />}
-                                label="Yes"
-                                color="#66b5a3"
-                              />
-                              <FormControlLabel
-                                value="no"
-                                control={<Radio />}
-                                label="No"
-                                color="#66b5a3"
-                              />
+                              <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                              <FormControlLabel value="no" control={<Radio />} label="No" />
                             </RadioGroup>
                           </FormControl>
                         </Grid>
@@ -484,7 +466,6 @@ function CreatePatient() {
                               fullWidth
                               label="Email"
                               name="email"
-                              type="text"
                               value={member.email}
                               onChange={(event) => handleFamilyChange(index, event)}
                               error={Boolean(familyErrors[index]?.email)}
@@ -500,14 +481,18 @@ function CreatePatient() {
                                   familyErrors[index]?.phoneNumber}
                               </span>
                             </label>
-                            <SoftInput
-                              fullWidth
-                              label="Phone Number"
-                              name="phoneNumber"
-                              type="text"
+                            <PhoneInput
+                              country={member.country}
                               value={member.phoneNumber}
-                              onChange={(event) => handleFamilyChange(index, event)}
-                              error={Boolean(familyErrors[index]?.phoneNumber)}
+                              onChange={(phone, country) =>
+                                handleFamilyPhoneChange(index, phone, country)
+                              }
+                              inputStyle={{
+                                width: "100%",
+                                border: familyErrors[index]?.phoneNumber
+                                  ? "1px solid red"
+                                  : "1px solid #ccc",
+                              }}
                             />
                           </Grid>
                         )}
@@ -518,6 +503,20 @@ function CreatePatient() {
               </SoftBox>
             </Card>
           </Grid>
+        </Grid>
+        <Grid item xs={12} marginTop={"20px"} display="flex" justifyContent="start" gap="10px">
+          <SoftButton variant="gradient" color={sidenavColor} onClick={handleSubmit}>
+            Submit
+          </SoftButton>
+          <SoftButton
+            variant="gradient"
+            color={"secondary"}
+            onClick={() => {
+              navigate("/patients");
+            }}
+          >
+            Cancel
+          </SoftButton>
         </Grid>
       </SoftBox>
     </DashboardLayout>

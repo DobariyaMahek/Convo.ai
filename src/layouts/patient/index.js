@@ -45,7 +45,7 @@ import { useNavigate } from "react-router-dom";
 import Close from "@mui/icons-material/Close";
 import SoftInput from "components/SoftInput";
 import { GetActivePatientInfo } from "../../redux/ApiSlice/patientSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch ,useSelector} from "react-redux";
 import useDebounce from "helper/useDebounce";
 // Author component
 function Author({ name, email }) {
@@ -90,156 +90,26 @@ Function.propTypes = {
 
 function Patient() {
   document.title = "Convo.AI | Patients";
+  const {patientInfo}= useSelector((state) => state.patient);
   const [open, setOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const debounceSearch = useDebounce(search, 1000);
-  const data = [
-    {
-      author: {
-        image: "team2",
-        name: "John Michael",
-        email: "john@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Organization",
-      },
-      status: "Active",
-      employed: "23/04/18",
-    },
-    {
-      author: {
-        image: "team2",
-        name: "John Michael",
-        email: "john@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Organization",
-      },
-      status: "Active",
-      employed: "23/04/18",
-    },
-    {
-      author: {
-        image: "team2",
-        name: "John Michael",
-        email: "john@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Organization",
-      },
-      status: "Active",
-      employed: "23/04/18",
-    },
-    {
-      author: {
-        image: "team2",
-        name: "John Michael",
-        email: "john@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Organization",
-      },
-      status: "Active",
-      employed: "23/04/18",
-    },
-    {
-      author: {
-        image: "team2",
-        name: "John Michael",
-        email: "john@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Organization",
-      },
-      status: "Active",
-      employed: "23/04/18",
-    },
-    {
-      author: {
-        image: "team3",
-        name: "Alexa Liras",
-        email: "alexa@creative-tim.com",
-      },
-      function: {
-        job: "Programator",
-        org: "Developer",
-      },
-      status: "Inactive",
-      employed: "11/01/19",
-    },
-    {
-      author: {
-        image: "team4",
-        name: "Laurent Perrier",
-        email: "laurent@creative-tim.com",
-      },
-      function: {
-        job: "Executive",
-        org: "Projects",
-      },
-      status: "Active",
-      employed: "19/09/17",
-    },
-    {
-      author: {
-        image: "team3",
-        name: "Michael Levi",
-        email: "michael@creative-tim.com",
-      },
-      function: {
-        job: "Programator",
-        org: "Developer",
-      },
-      status: "Active",
-      employed: "24/12/08",
-    },
-    {
-      author: {
-        image: "team2",
-        name: "Richard Gran",
-        email: "richard@creative-tim.com",
-      },
-      function: {
-        job: "Manager",
-        org: "Executive",
-      },
-      status: "Inactive",
-      employed: "04/10/21",
-    },
-    {
-      author: {
-        image: "team4",
-        name: "Miriam Eric",
-        email: "miriam@creative-tim.com",
-      },
-      function: {
-        job: "Programtor",
-        org: "Developer",
-      },
-      status: "Inactive",
-      employed: "14/09/20",
-    },
-  ];
-  const currentRows = data.map((item) => ({
-    patient: <Author name={item.author.name} email={item.author.email} />,
-    createdAt: (
+
+  const currentRows = patientInfo.map((item) => ({
+    patient: <Author name={`${item?.first_name} ${item?.last_name}`} email={item?.email} />,
+    birthDate: (
       <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-        {item.employed}
+        {item.birthdate}
       </SoftTypography>
     ),
     status: (
       <SoftBadge
         variant="gradient"
-        badgeContent={item.status === "Active" ? "Active" : "Inactive"}
-        color={item.status === "Active" ? "success" : "secondary"}
+        badgeContent={item.is_active === true ? "Active" : "Inactive"}
+        color={item.is_active === true ? "success" : "secondary"}
         size="xs"
         container
       />
@@ -249,7 +119,7 @@ function Patient() {
         <Icon
           sx={{ cursor: "pointer" }}
           onClick={() => {
-            navigate(`/update-patient`);
+            navigate(`/update-patient/${item?.id}`);
           }}
         >
           <Edit />

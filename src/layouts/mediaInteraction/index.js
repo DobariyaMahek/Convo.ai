@@ -58,14 +58,6 @@ function MediaInteraction() {
 
   const handleSubmit = () => {
     if (validateFields()) {
-      // Handle submit logic here
-      console.log({
-        media,
-        description,
-        tags,
-        instructions,
-      });
-      // Reset the form
       setMedia([]);
       setDescription("");
       setTags("");

@@ -91,11 +91,11 @@ const useRoutes = () => {
         {
           name: "Update Patient",
           key: "update-patient",
-          route: "/update-patient",
+          route: "/update-patient/:id",
           component: <CreatePatient />,
           noCollapse: true,
           isProtected: true,
-          isActive: collapseName === "/update-patient",
+          isActive: collapseName === "/update-patient/:id",
           isShow: false,
         },
       ],

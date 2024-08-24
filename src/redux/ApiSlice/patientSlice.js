@@ -4,14 +4,18 @@ import { authHeader } from "helper/authHelper";
 const initialState = {
   patientLoader: false,
   patientInfo: [],
+
 };
 
 export const GetActivePatientInfo = createAsyncThunk(
-  "/patients/active-patients",
+  "/patients/list-and-search-patients",
   async ({ search }) => {
     try {
       const response = await axiosInstance.get(
-        `patients/active-patients${search && `?search=${search}`}`
+        `/patients/list-and-search-patients${search && `?name=${search}`}`,
+        {
+          headers: authHeader(),
+        }
       );
       return response.data;
     } catch (e) {
@@ -42,6 +46,7 @@ export const patientSlice = createSlice({
       })
       .addCase(GetActivePatientInfo.fulfilled, (state, action) => {
         state.patientLoader = false;
+        state.patientInfo=action.payload.patients||[]
       })
       .addCase(GetActivePatientInfo.rejected, (state, action) => {
         state.patientLoader = false;

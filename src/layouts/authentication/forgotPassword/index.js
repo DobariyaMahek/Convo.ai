@@ -34,14 +34,14 @@ function ForgotPassword() {
   const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
-    const value = e.target.value?.trimStart();
+    const value = e.target.value?.trim()?.toLowerCase();
     setEmail(value);
     setError(validateEmail(value));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationError = validateEmail(email);
+    const validationError = validateEmail(email?.trim()?.toLowerCase());
     if (validationError) {
       setError(validationError);
       return;
@@ -53,7 +53,11 @@ function ForgotPassword() {
         res?.payload?.status === "success" ||
         res?.payload?.detail === "An OTP was already sent. Please check your email."
       ) {
-        toast("OTP has been sent to your email.");
+        toast(
+          res?.payload?.detail === "An OTP was already sent. Please check your email."
+            ? res?.payload?.detail
+            : "OTP has been sent to your email."
+        );
         setOtpModalOpen(true);
       } else {
         toast(res?.payload?.detail);
@@ -70,7 +74,11 @@ function ForgotPassword() {
         setOtpModalOpen(false);
         setResetPasswordModalOpen(true);
       } else {
-        toast(res?.payload?.detail);
+        toast(
+          res?.payload?.detail == "Invalid or expired OTP"
+            ? "Please enter valid OTP"
+            : res?.payload?.detail
+        );
       }
     });
   };
@@ -150,6 +158,7 @@ function ForgotPassword() {
         open={otpModalOpen}
         onClose={() => setOtpModalOpen(false)}
         onVerify={handleVerifyOTP}
+        onSubmit={handleSubmit}
       />
 
       {/* Reset Password Modal */}

@@ -50,8 +50,8 @@ function Breadcrumbs({ icon, title, route, light }) {
             <Icon>{icon}</Icon>
           </SoftTypography>
         </Link>
-        {routes.map((el) => (
-          <Link to={`/${el}`} key={el}>
+        {/* {routes.map((el) => (
+          <Link to={window?.location?.pathname} key={el}>
             <SoftTypography
               component="span"
               variant="button"
@@ -64,7 +64,7 @@ function Breadcrumbs({ icon, title, route, light }) {
               {el}
             </SoftTypography>
           </Link>
-        ))}
+        ))} */}
         <SoftTypography
           variant="button"
           fontWeight="regular"

@@ -19,14 +19,14 @@ const validateField = (name, value) => {
     case "email":
       return !value?.trim()
         ? "Email is required"
-        : !EMAIL_REGEX.test(value)
+        : !EMAIL_REGEX.test(value?.trim()?.toLowerCase())
         ? "Please enter a valid email"
         : "";
     case "password":
       return !value?.trim()
         ? "Password is required"
-        : value.length < 6
-        ? "Password must be at least 6 characters long."
+        : value.length < 8
+        ? "Password must be at least 8 characters long."
         : "";
     default:
       return "";
@@ -67,7 +67,7 @@ function Index() {
       const { name, value } = e.target;
       setForm((prevForm) => ({
         ...prevForm,
-        [name]: value?.trimStart(),
+        [name]:   name=='email'?value?.trim()?.toLowerCase():value?.trimStart(),
       }));
 
       // Update validation for the specific field
