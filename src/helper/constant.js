@@ -1,4 +1,4 @@
-export const EMAIL_REGAX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const EMAIL_REGEX = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
 export const PATIENT_LIST_COLUMNS = [
   { name: "patient", align: "left" },

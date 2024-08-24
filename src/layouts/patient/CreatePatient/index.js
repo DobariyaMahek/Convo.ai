@@ -11,7 +11,7 @@ import SoftInput from "components/SoftInput";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { useSoftUIController } from "context";
-import { EMAIL_REGAX } from "helper/constant";
+import { EMAIL_REGEX } from "helper/constant";
 import { Close, Delete } from "@mui/icons-material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import SoftButton from "components/SoftButton";
@@ -70,7 +70,7 @@ function CreatePatient() {
       if (
         generalInfo.email &&
         generalInfo.hasEmail == "yes" &&
-        !EMAIL_REGAX?.test(generalInfo.email)
+        !EMAIL_REGEX?.test(generalInfo.email)
       ) {
         newErrors.email = `Email is not valid`;
       }
@@ -98,7 +98,7 @@ function CreatePatient() {
       if (!member.email && member.hasEmail == "yes") {
         memberErrors.email = "Email is required";
         valid = false;
-      } else if (member.email && member.hasEmail == "yes" && !EMAIL_REGAX?.test(member.email)) {
+      } else if (member.email && member.hasEmail == "yes" && !EMAIL_REGEX?.test(member.email)) {
         memberErrors.email = `Email is not valid`;
         valid = false;
       }

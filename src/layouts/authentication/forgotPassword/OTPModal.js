@@ -10,9 +10,19 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
   const [activeInput, setActiveInput] = useState(0);
   const [error, setError] = useState("");
 
+  const validateOtp = (otpArray) => {
+    const otpValue = otpArray.join("");
+    if (otpValue.length !== 6) {
+      setError("Please enter a valid 6-digit OTP");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
   const handleOtpChange = useCallback((newOtp) => {
-    const otpValue = newOtp.join("");
-    otpValue.length === 6 ? setError("") : setError("Please enter a valid 6-digit OTP");
+    setOtp(newOtp);
+    validateOtp(newOtp);
   }, []);
 
   const changeCodeAtFocus = useCallback(
@@ -69,7 +79,8 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
         }
         case "Enter": {
           e.preventDefault();
-          handleSubmit(e);
+          handleSubmit();
+          break;
         }
         default: {
           if (pressedKey.match(/^[^a-zA-Z0-9]$/)) {
@@ -97,7 +108,6 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
         setOtp(updatedOTPValues);
         handleOtpChange(updatedOTPValues);
 
-        // Focus on the last filled input
         const lastFilledInput = Math.min(activeInput + pastedData.length - 1, 5);
         setActiveInput(lastFilledInput);
         focusInput(lastFilledInput + 1);
@@ -107,12 +117,8 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
   );
 
   const handleSubmit = () => {
-    const otpValue = otp.join("");
-    if (otpValue.length !== 6) {
-      setError("Please enter a valid 6-digit OTP");
-    } else {
-      setError("");
-      onVerify(otpValue);
+    if (validateOtp(otp)) {
+      onVerify(otp.join(""));
       setOtp(new Array(6).fill(""));
       focusInput(0);
     }
@@ -154,7 +160,7 @@ function OTPModal({ open, onClose, onVerify, onSubmit }) {
                   maxLength: 1,
                   style: { textAlign: "center" },
                   id: `otp-input-${index}`,
-                  onPaste: handlePaste, // Add paste event listener
+                  onPaste: handlePaste,
                 }}
                 type={"text"}
                 value={value}

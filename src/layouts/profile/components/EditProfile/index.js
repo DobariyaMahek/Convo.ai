@@ -5,7 +5,7 @@ import SoftBox from "components/SoftBox";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 import { useSoftUIController } from "context";
-import { EMAIL_REGAX } from "helper/constant";
+import { EMAIL_REGEX } from "helper/constant";
 
 const EditProfile = ({ profileData, onSave, onCancel }) => {
   const [controller] = useSoftUIController();
@@ -22,7 +22,7 @@ const EditProfile = ({ profileData, onSave, onCancel }) => {
     const newErrors = {};
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
-    if (formData.email && !EMAIL_REGAX?.test(formData.email)) newErrors.email = "Email is invalid";
+    if (formData.email && !EMAIL_REGEX?.test(formData.email)) newErrors.email = "Email is invalid";
     // Add more validation as needed
     return newErrors;
   };

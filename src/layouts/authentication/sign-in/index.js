@@ -10,6 +10,36 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../../redux/ApiSlice/authSlice";
 import toast from "react-hot-toast";
+import { EMAIL_REGEX } from "helper/constant";
+
+const validateField = (name, value) => {
+  switch (name) {
+    case "name":
+      return !value?.trim() ? "Name is required" : "";
+    case "email":
+      return !value?.trim()
+        ? "Email is required"
+        : !EMAIL_REGEX.test(value)
+        ? "Please enter a valid email"
+        : "";
+    case "password":
+      return !value?.trim()
+        ? "Password is required"
+        : value.length < 6
+        ? "Password must be at least 6 characters long."
+        : "";
+    default:
+      return "";
+  }
+};
+
+const validateForm = (form) => {
+  return {
+    name: validateField("name", form.name),
+    email: validateField("email", form.email),
+    password: validateField("password", form.password),
+  };
+};
 
 function Index() {
   document.title = "Convo.AI | SignIn";
@@ -20,7 +50,12 @@ function Index() {
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -32,66 +67,54 @@ function Index() {
       const { name, value } = e.target;
       setForm((prevForm) => ({
         ...prevForm,
-        [name]: value,
+        [name]: value?.trimStart(),
       }));
+
+      // Update validation for the specific field
       setError((prevError) => ({
         ...prevError,
-        [name]: "",
+        [name]: validateField(name, value),
       }));
     },
-    [setForm]
+    [setForm, setError]
   );
 
-  const validateForm = useCallback(() => {
-    const { name, email, password } = form;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    let errors = {
-      name: !name?.trim() ? "Name is required" : "",
-      email: !email?.trim()
-        ? "Email is required"
-        : !emailRegex.test(email)
-        ? "Please enter a valid email"
-        : "",
-      password: !password?.trim()
-        ? "Password is required"
-        : password.length < 6
-        ? "Password must be at least 6 characters long."
-        : "",
-    };
-
+  const handleSubmit = useCallback(() => {
+    const errors = validateForm(form);
     setError(errors);
 
-    // Return the name of the first invalid field
-    if (!name?.trim()) return "name";
-    if (!email?.trim() || !emailRegex.test(email)) return "email";
-    if (!password?.trim() || password.length < 6) return "password";
-    return null;
-  }, [form]);
+    const firstInvalidField = Object.keys(errors).find(
+      (key) => errors[key] !== ""
+    );
 
-  const handleSubmit = useCallback(() => {
-    const firstInvalidField = validateForm();
     if (firstInvalidField) {
       if (firstInvalidField === "name") nameRef.current.focus();
       if (firstInvalidField === "email") emailRef.current.focus();
       if (firstInvalidField === "password") passwordRef.current.focus();
     } else {
       const { name, email, password } = form;
-      dispatch(logIn({ name, email, password })).then((res) => {
+      dispatch(
+        logIn({
+          name: name?.trim(),
+          email: email?.trim(),
+          password: password?.trim(),
+        })
+      ).then((res) => {
         if (res?.payload?.status === "success") {
           toast("You have successfully logged in.");
           localStorage.setItem("authUser", JSON.stringify({ ...res?.payload }));
           navigate("/dashboard");
         } else {
           const errorMessage =
-            res?.payload?.detail === "Incorrect username, email, or password"
+            res?.payload?.detail ===
+            "Incorrect username, email, or password"
               ? "Invalid credentials"
               : "Oops! Something went wrong";
           toast(errorMessage);
         }
       });
     }
-  }, [form, validateForm, dispatch, navigate]);
+  }, [form, dispatch, navigate]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -136,7 +159,6 @@ function Index() {
                 Email <span>{error?.email && error?.email}</span>
               </label>
               <SoftInput
-                type="email"
                 placeholder="Email"
                 name="email"
                 value={form.email}

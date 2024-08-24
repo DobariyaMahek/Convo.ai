@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Modal, Box, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import SoftInput from "components/SoftInput";
@@ -15,11 +15,14 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
 
+  const newPasswordRef = useRef();
+  const confirmPasswordRef = useRef();
+
   const validateForm = (field, value) => {
     let error = { ...errors };
 
     if (field === "newPassword") {
-      if (!value) {
+      if (!value?.trimStart()) {
         error.newPassword = "New Password is required";
       } else if (value.length < 6) {
         error.newPassword = "Password must be at least 6 characters";
@@ -29,7 +32,7 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
     }
 
     if (field === "confirmPassword") {
-      if (!value) {
+      if (!value?.trimStart()) {
         error.confirmPassword = "Confirm Password is required";
       } else if (value.length < 6) {
         error.confirmPassword = "Password must be at least 6 characters";
@@ -48,7 +51,7 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value?.trimStart(),
     }));
     validateForm(name, value);
   };
@@ -66,6 +69,19 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           }
         }
       );
+    }
+  };
+
+  const handleKeyDown = (e, fieldName) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (validateForm(fieldName, formData[fieldName])) {
+        if (fieldName === "newPassword") {
+          confirmPasswordRef.current.focus();
+        } else if (fieldName === "confirmPassword") {
+          handleSubmit();
+        }
+      }
     }
   };
 
@@ -101,11 +117,8 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           value={formData.newPassword}
           onChange={handleChange}
           error={!!errors?.newPassword}
-          onKeyDown={(e) => {
-            if (e?.key == "Enter") {
-              handleSubmit();
-            }
-          }}
+          onKeyDown={(e) => handleKeyDown(e, "newPassword")}
+          inputRef={newPasswordRef}
         />
         <label style={{ marginTop: "10px" }}>
           Confirm Password <span>* {errors?.confirmPassword}</span>
@@ -119,11 +132,8 @@ function ResetPasswordModal({ open, onClose, email, onResetPassword }) {
           value={formData.confirmPassword}
           onChange={handleChange}
           error={!!errors?.confirmPassword}
-          onKeyDown={(e) => {
-            if (e?.key == "Enter") {
-              handleSubmit();
-            }
-          }}
+          onKeyDown={(e) => handleKeyDown(e, "confirmPassword")}
+          inputRef={confirmPasswordRef}
         />
         <SoftButton fullWidth variant="gradient" color="dark" sx={{ mt: 2 }} onClick={handleSubmit}>
           Reset Password

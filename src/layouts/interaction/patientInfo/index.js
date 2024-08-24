@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import SoftInput from "components/SoftInput";
 import { useSoftUIController } from "context";
-import { EMAIL_REGAX } from "helper/constant";
+import { EMAIL_REGEX } from "helper/constant";
 import { Close } from "@mui/icons-material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import SoftButton from "components/SoftButton";
